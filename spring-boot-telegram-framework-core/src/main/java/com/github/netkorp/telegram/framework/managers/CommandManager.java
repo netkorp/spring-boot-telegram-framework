@@ -29,19 +29,22 @@ public class CommandManager {
         this.commandsByGroup = new TreeMap<>();
         this.activeCommand = new HashMap<>();
 
-        commands.forEach(command -> {
-            command.setBot(bot);
-            command.setCommandManager(this);
-            this.commands.put(command.command(), command);
+        commands.forEach(command -> addCommand(command, bot));
+    }
 
-            String group = command.getClass().isAnnotationPresent(CommandGroup.class) ?
-                    command.getClass().getAnnotation(CommandGroup.class).value() : "";
+    private void addCommand(Command command, PollingTelegramBot bot) {
+        command.setBot(bot);
+        command.setCommandManager(this);
+        this.commands.put(command.command(), command);
 
-            List<Command> commandList = this.commandsByGroup.getOrDefault(group, new LinkedList<>());
-            commandList.add(command);
+        // Groups
+        String group = command.getClass().isAnnotationPresent(CommandGroup.class) ?
+                command.getClass().getAnnotation(CommandGroup.class).value() : "";
 
-            this.commandsByGroup.put(group, commandList);
-        });
+        List<Command> commandList = this.commandsByGroup.getOrDefault(group, new LinkedList<>());
+        commandList.add(command);
+
+        this.commandsByGroup.put(group, commandList);
     }
 
     /**
