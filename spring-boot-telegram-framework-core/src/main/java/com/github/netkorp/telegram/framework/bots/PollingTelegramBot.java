@@ -38,8 +38,7 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
     }
 
     @Autowired
-    @PostConstruct
-    public void init(CommandManager commandManager) {
+    public void setCommandManager(CommandManager commandManager) {
         this.commandManager = commandManager;
     }
 

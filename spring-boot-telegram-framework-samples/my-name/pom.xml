@@ -5,6 +5,7 @@
 
     <artifactId>my-name</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
     <name>my-name</name>
     <description>Demo project for Spring Boot</description>
