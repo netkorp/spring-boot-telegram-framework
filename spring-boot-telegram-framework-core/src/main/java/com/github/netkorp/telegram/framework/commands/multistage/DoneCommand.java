@@ -6,13 +6,15 @@ import com.github.netkorp.telegram.framework.commands.abstracts.AbstractCommand;
 import com.github.netkorp.telegram.framework.commands.interfaces.MultistageCommand;
 import com.github.netkorp.telegram.framework.exceptions.*;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Component
 @CommandGroup("Multistage")
 @ConditionalOnBean(MultistageCommand.class)
-public class DoneCommand extends AbstractCommand {
+@ConditionalOnSingleCandidate(com.github.netkorp.telegram.framework.commands.interfaces.DoneCommand.class)
+public class DoneCommand extends AbstractCommand implements com.github.netkorp.telegram.framework.commands.interfaces.DoneCommand {
 
     /**
      * Processes the data of the commands.
