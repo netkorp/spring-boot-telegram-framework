@@ -2,7 +2,8 @@ package com.github.netkorp.telegram.framework.commands.multistage;
 
 import com.github.netkorp.telegram.framework.bots.PollingTelegramBot;
 import com.github.netkorp.telegram.framework.commands.abstracts.AbstractCommand;
-import com.github.netkorp.telegram.framework.exceptions.*;
+import com.github.netkorp.telegram.framework.exceptions.CommandNotActive;
+import com.github.netkorp.telegram.framework.exceptions.CommandNotFound;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -16,7 +17,7 @@ public class CloseCommand extends AbstractCommand {
      */
     @Override
     public String getName() {
-        return "exit";
+        return "close";
     }
 
     /**
