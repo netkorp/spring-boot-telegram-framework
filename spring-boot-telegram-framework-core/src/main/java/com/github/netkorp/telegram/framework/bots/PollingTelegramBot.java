@@ -13,8 +13,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import javax.annotation.PostConstruct;
-
 @Component
 public class PollingTelegramBot extends TelegramLongPollingBot {
 
@@ -58,8 +56,8 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
                 if (update.getMessage().hasText()) {
                     String command = update.getMessage().getText().toLowerCase();
 
-                    // Command ID is the unique free commands
-                    if ("id".equals(command)) {
+                    // Command ID is the unique free command
+                    if ("/whoami".equals(command)) {
                         commandManager.getCommand(command).execute(update);
                     }
 
@@ -69,7 +67,7 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
                             case HELP_COMMAND_NAME:
                                 commandManager.getCommand(command).execute(update);
                                 break;
-                            case "id":
+                            case "/whoami":
                                 break;
                             default:
                                 processMessage(update);

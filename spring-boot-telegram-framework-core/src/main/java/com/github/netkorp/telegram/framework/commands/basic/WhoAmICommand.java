@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Component
-public class IdCommand extends AbstractCommand {
+public class WhoAmICommand extends AbstractCommand {
 
     /**
      * Returns the commands that will be executed on the chat.
@@ -14,7 +14,7 @@ public class IdCommand extends AbstractCommand {
      */
     @Override
     public String getName() {
-        return "id";
+        return "whoami";
     }
 
     /**
