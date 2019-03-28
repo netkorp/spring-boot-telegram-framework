@@ -1,5 +1,6 @@
 package com.github.netkorp.telegram.framework.commands.multistage;
 
+import com.github.netkorp.telegram.framework.annotations.CommandGroup;
 import com.github.netkorp.telegram.framework.bots.PollingTelegramBot;
 import com.github.netkorp.telegram.framework.commands.abstracts.AbstractCommand;
 import com.github.netkorp.telegram.framework.exceptions.CommandNotActive;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Component
+@CommandGroup("Multistage")
 public class CloseCommand extends AbstractCommand {
 
     /**

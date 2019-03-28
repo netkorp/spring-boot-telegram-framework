@@ -1,5 +1,6 @@
 package com.github.netkorp.telegram.framework.managers;
 
+import com.github.netkorp.telegram.framework.annotations.CommandGroup;
 import com.github.netkorp.telegram.framework.bots.PollingTelegramBot;
 import com.github.netkorp.telegram.framework.commands.interfaces.Command;
 import com.github.netkorp.telegram.framework.commands.interfaces.MultistageCommand;
@@ -8,8 +9,8 @@ import com.github.netkorp.telegram.framework.exceptions.CommandNotFound;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
@@ -17,18 +18,29 @@ import java.util.TreeMap;
 
 @Component
 public class CommandManager {
-    private final SortedMap<String, Command> commands;
+    private final Map<String, Command> commands;
+    private final SortedMap<String, List<Command>> commandsByGroup;
+
     private final Map<Long, MultistageCommand> activeCommand;
 
     @Autowired
     public CommandManager(List<Command> commands, PollingTelegramBot bot) {
-        this.commands = new TreeMap<>();
+        this.commands = new HashMap<>();
+        this.commandsByGroup = new TreeMap<>();
         this.activeCommand = new HashMap<>();
 
         commands.forEach(command -> {
             command.setBot(bot);
             command.setCommandManager(this);
             this.commands.put(command.command(), command);
+
+            String group = command.getClass().isAnnotationPresent(CommandGroup.class) ?
+                    command.getClass().getAnnotation(CommandGroup.class).value() : "";
+
+            List<Command> commandList = this.commandsByGroup.getOrDefault(group, new LinkedList<>());
+            commandList.add(command);
+
+            this.commandsByGroup.put(group, commandList);
         });
     }
 
@@ -89,7 +101,7 @@ public class CommandManager {
      *
      * @return Available commands.
      */
-    public Collection<Command> getAvailableCommands() {
-        return commands.values();
+    public SortedMap<String, List<Command>> getAvailableCommandsByGroups() {
+        return commandsByGroup;
     }
 }

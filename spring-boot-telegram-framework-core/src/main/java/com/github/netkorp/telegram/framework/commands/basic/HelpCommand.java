@@ -1,12 +1,15 @@
 package com.github.netkorp.telegram.framework.commands.basic;
 
+import com.github.netkorp.telegram.framework.annotations.CommandGroup;
 import com.github.netkorp.telegram.framework.commands.abstracts.AbstractCommand;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.StringJoiner;
 
 @Component
+@CommandGroup("Basic")
 public class HelpCommand extends AbstractCommand {
 
     /**
@@ -27,7 +30,13 @@ public class HelpCommand extends AbstractCommand {
     @Override
     public void execute(Update update) {
         StringJoiner stringJoiner = new StringJoiner("\n");
-        commandManager.getAvailableCommands().forEach(command -> stringJoiner.add(String.format("<b>%s:</b>\t\t%s", command.command(), command.help())));
+        stringJoiner.add("You can control me by sending these commands:\n");
+        commandManager.getAvailableCommandsByGroups().forEach((group, commands) -> {
+            if (!Strings.isEmpty(group)) {
+                stringJoiner.add(String.format("\n<b>%s</b>", group));
+            }
+            commands.forEach(command -> stringJoiner.add(String.format("%s - %s", command.command(), command.help())));
+        });
         bot.sendMessage(stringJoiner.toString(), update.getMessage().getChatId(), true);
     }
 
