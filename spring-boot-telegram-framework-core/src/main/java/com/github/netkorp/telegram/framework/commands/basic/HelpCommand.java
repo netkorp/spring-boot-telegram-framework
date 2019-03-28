@@ -13,16 +13,6 @@ import java.util.StringJoiner;
 public class HelpCommand extends AbstractCommand {
 
     /**
-     * Returns the commands that will be executed on the chat.
-     *
-     * @return Command to be executed.
-     */
-    @Override
-    public String getName() {
-        return "help";
-    }
-
-    /**
      * Processes the data of the commands.
      *
      * @param update The received message.
@@ -35,18 +25,18 @@ public class HelpCommand extends AbstractCommand {
             if (!Strings.isEmpty(group)) {
                 stringJoiner.add(String.format("\n<b>%s</b>", group));
             }
-            commands.forEach(command -> stringJoiner.add(String.format("%s - %s", command.command(), command.help())));
+            commands.forEach(command -> stringJoiner.add(String.format("%s - %s", command.command(), command.description())));
         });
         bot.sendMessage(stringJoiner.toString(), update.getMessage().getChatId(), true);
     }
 
     /**
-     * Returns the help of the commands.
+     * Returns the description of the commands.
      *
-     * @return The help.
+     * @return The description.
      */
     @Override
-    public String help() {
+    public String description() {
         return "Shows this message";
     }
 }

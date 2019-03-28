@@ -28,12 +28,4 @@ public abstract class AbstractCommand implements Command {
     public void setCommandManager(CommandManager commandManager) {
         this.commandManager = commandManager;
     }
-
-    /**
-     *
-     * @return
-     */
-    public String command() {
-        return getName().startsWith("/") ? getName() : String.format("/%s", getName());
-    }
 }

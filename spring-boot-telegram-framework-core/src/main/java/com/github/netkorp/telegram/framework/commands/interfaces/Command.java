@@ -11,13 +11,17 @@ public interface Command {
      *
      * @return Command to be executed.
      */
-    String getName();
+    default String getName() {
+        return this.getClass().getSimpleName().toLowerCase().replace("command", "");
+    }
 
     /**
      *
      * @return
      */
-    String command();
+    default String command() {
+        return getName().startsWith("/") ? getName() : String.format("/%s", getName());
+    }
 
     /**
      * Defines the Telegram bots to be used.
@@ -41,9 +45,9 @@ public interface Command {
     void execute(final Update update);
 
     /**
-     * Returns the help of the commands.
+     * Returns the description of the commands.
      *
-     * @return The help.
+     * @return The description.
      */
-    String help();
+    String description();
 }

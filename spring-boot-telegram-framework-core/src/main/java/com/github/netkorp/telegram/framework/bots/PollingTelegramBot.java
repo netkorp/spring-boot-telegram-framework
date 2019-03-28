@@ -16,7 +16,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 @Component
 public class PollingTelegramBot extends TelegramLongPollingBot {
 
-    public static final String HELP_COMMAND_NAME = "help";
+    public static final String HELP_COMMAND_NAME = "description";
     public static final String DONE_COMMAND_NAME = "done";
     public static final String EXIT_COMMAND_NAME = "close";
 
