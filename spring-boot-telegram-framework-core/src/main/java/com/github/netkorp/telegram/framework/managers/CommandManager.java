@@ -1,6 +1,7 @@
 package com.github.netkorp.telegram.framework.managers;
 
 import com.github.netkorp.telegram.framework.annotations.CommandGroup;
+import com.github.netkorp.telegram.framework.annotations.FreeCommand;
 import com.github.netkorp.telegram.framework.bots.PollingTelegramBot;
 import com.github.netkorp.telegram.framework.commands.interfaces.CloseCommand;
 import com.github.netkorp.telegram.framework.commands.interfaces.Command;
@@ -21,7 +22,9 @@ import java.util.TreeMap;
 
 @Component
 public class CommandManager {
-    private final Map<String, Command> commands;
+    private final Map<String, Command> secureCommands;
+    private final Map<String, Command> freeCommands;
+
     private final SortedMap<String, List<Command>> commandsByGroup;
 
     private final Map<Long, MultistageCommand> activeCommand;
@@ -32,7 +35,9 @@ public class CommandManager {
 
     @Autowired
     public CommandManager(List<Command> commands, PollingTelegramBot bot) {
-        this.commands = new HashMap<>();
+        this.secureCommands = new HashMap<>();
+        this.freeCommands = new HashMap<>();
+
         this.commandsByGroup = new TreeMap<>();
         this.activeCommand = new HashMap<>();
 
@@ -42,7 +47,11 @@ public class CommandManager {
     private void addCommand(Command command, PollingTelegramBot bot) {
         command.setBot(bot);
         command.setCommandManager(this);
-        this.commands.put(command.command(), command);
+        this.secureCommands.put(command.command(), command);
+
+        if (command.getClass().isAnnotationPresent(FreeCommand.class)) {
+            this.freeCommands.put(command.command(), command);
+        }
 
         if (command instanceof CloseCommand) {
             closeCommand = command.command();
@@ -69,12 +78,20 @@ public class CommandManager {
      * @return The {@link Command} instance.
      * @throws CommandNotFound If the given name is not related to any commands.
      */
-    public Command getCommand(String command) throws CommandNotFound {
-        if (!this.commands.containsKey(command)) {
+    public Command getSecureCommand(String command) throws CommandNotFound {
+        if (!this.secureCommands.containsKey(command)) {
             throw new CommandNotFound();
         }
 
-        return this.commands.get(command);
+        return this.secureCommands.get(command);
+    }
+
+    public Command getFreeCommand(String command) throws CommandNotFound {
+        if (!this.freeCommands.containsKey(command)) {
+            throw new CommandNotFound();
+        }
+
+        return this.freeCommands.get(command);
     }
 
     public void setActiveCommand(final Long idChat, final MultistageCommand command) {
@@ -115,15 +132,15 @@ public class CommandManager {
     }
 
     public Command getCloseCommand() throws CommandNotFound {
-        return getCommand(this.closeCommand);
+        return getSecureCommand(this.closeCommand);
     }
 
     public Command getDoneCommand() throws CommandNotFound {
-        return getCommand(this.doneCommand);
+        return getSecureCommand(this.doneCommand);
     }
 
     public Command getHelpCommand() throws CommandNotFound {
-        return getCommand(this.helpCommand);
+        return getSecureCommand(this.helpCommand);
     }
 
     /**

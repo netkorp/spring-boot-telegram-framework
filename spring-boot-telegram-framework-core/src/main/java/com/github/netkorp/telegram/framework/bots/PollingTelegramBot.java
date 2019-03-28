@@ -52,18 +52,13 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
                 if (update.getMessage().hasText()) {
                     String command = update.getMessage().getText().toLowerCase();
 
-                    // Command ID is the unique free command
-                    if ("/whoami".equals(command)) {
-                        commandManager.getCommand(command).execute(update);
+                    // Checking if it's a free command
+                    try {
+                        commandManager.getFreeCommand(command).execute(update);
                         return;
+                    } catch (CommandNotFound commandNotFound) {
+                        // Do nothing
                     }
-
-                    // For the rest of commands we have to check if the chat is authorized
-                    if (securityManager.isAuthorized(idChat)) {
-                        processMessage(update);
-                    }
-
-                    return;
                 }
 
                 // Checking if the chat is authorized
@@ -133,7 +128,7 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
 
             // Trying to get commands
             try {
-                Command command = commandManager.getCommand(commandText);
+                Command command = commandManager.getSecureCommand(commandText);
 
                 // If there is no active commands defined, we understand this is an attempt to define/execute one
                 if (!commandManager.hasActiveCommand(idChat)) {
