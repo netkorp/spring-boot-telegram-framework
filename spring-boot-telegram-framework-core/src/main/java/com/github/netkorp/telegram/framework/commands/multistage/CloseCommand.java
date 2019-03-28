@@ -1,7 +1,6 @@
 package com.github.netkorp.telegram.framework.commands.multistage;
 
 import com.github.netkorp.telegram.framework.annotations.CommandGroup;
-import com.github.netkorp.telegram.framework.bots.PollingTelegramBot;
 import com.github.netkorp.telegram.framework.commands.abstracts.AbstractCommand;
 import com.github.netkorp.telegram.framework.commands.interfaces.MultistageCommand;
 import com.github.netkorp.telegram.framework.exceptions.CommandNotActive;
@@ -33,7 +32,7 @@ public class CloseCommand extends AbstractCommand implements com.github.netkorp.
         } catch (CommandNotActive commandNotActive) {
             bot.sendMessage(commandNotActive.getMessage(), idChat);
             try {
-                commandManager.getCommand(PollingTelegramBot.HELP_COMMAND_NAME).execute(update);
+                commandManager.getHelpCommand().execute(update);
             } catch (CommandNotFound commandNotFound) {
                 // Do nothing
             }

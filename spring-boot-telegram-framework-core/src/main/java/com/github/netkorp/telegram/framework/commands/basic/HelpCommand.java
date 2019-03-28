@@ -23,7 +23,7 @@ public class HelpCommand extends AbstractCommand implements com.github.netkorp.t
     public void execute(Update update) {
         StringJoiner stringJoiner = new StringJoiner("\n");
         stringJoiner.add("You can control me by sending these commands:\n");
-        commandManager.getAvailableCommandsByGroups().forEach((group, commands) -> {
+        commandManager.getCommandsByGroup().forEach((group, commands) -> {
             if (!Strings.isEmpty(group)) {
                 stringJoiner.add(String.format("\n<b>%s</b>", group));
             }

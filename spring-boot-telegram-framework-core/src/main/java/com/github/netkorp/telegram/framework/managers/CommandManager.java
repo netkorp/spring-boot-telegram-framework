@@ -2,7 +2,10 @@ package com.github.netkorp.telegram.framework.managers;
 
 import com.github.netkorp.telegram.framework.annotations.CommandGroup;
 import com.github.netkorp.telegram.framework.bots.PollingTelegramBot;
+import com.github.netkorp.telegram.framework.commands.interfaces.CloseCommand;
 import com.github.netkorp.telegram.framework.commands.interfaces.Command;
+import com.github.netkorp.telegram.framework.commands.interfaces.DoneCommand;
+import com.github.netkorp.telegram.framework.commands.interfaces.HelpCommand;
 import com.github.netkorp.telegram.framework.commands.interfaces.MultistageCommand;
 import com.github.netkorp.telegram.framework.exceptions.CommandNotActive;
 import com.github.netkorp.telegram.framework.exceptions.CommandNotFound;
@@ -23,6 +26,10 @@ public class CommandManager {
 
     private final Map<Long, MultistageCommand> activeCommand;
 
+    private String closeCommand;
+    private String doneCommand;
+    private String helpCommand;
+
     @Autowired
     public CommandManager(List<Command> commands, PollingTelegramBot bot) {
         this.commands = new HashMap<>();
@@ -36,6 +43,14 @@ public class CommandManager {
         command.setBot(bot);
         command.setCommandManager(this);
         this.commands.put(command.command(), command);
+
+        if (command instanceof CloseCommand) {
+            closeCommand = command.command();
+        } else if (command instanceof DoneCommand) {
+            doneCommand = command.command();
+        } else if (command instanceof HelpCommand) {
+            helpCommand = command.command();
+        }
 
         // Groups
         String group = command.getClass().isAnnotationPresent(CommandGroup.class) ?
@@ -99,12 +114,24 @@ public class CommandManager {
         return activeCommand.containsKey(idChat);
     }
 
+    public Command getCloseCommand() throws CommandNotFound {
+        return getCommand(this.closeCommand);
+    }
+
+    public Command getDoneCommand() throws CommandNotFound {
+        return getCommand(this.doneCommand);
+    }
+
+    public Command getHelpCommand() throws CommandNotFound {
+        return getCommand(this.helpCommand);
+    }
+
     /**
      * Returns the list with the available commands.
      *
      * @return Available commands.
      */
-    public SortedMap<String, List<Command>> getAvailableCommandsByGroups() {
+    public SortedMap<String, List<Command>> getCommandsByGroup() {
         return commandsByGroup;
     }
 }

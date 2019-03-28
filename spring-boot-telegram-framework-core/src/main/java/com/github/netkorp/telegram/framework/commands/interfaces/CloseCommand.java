@@ -1,4 +1,4 @@
 package com.github.netkorp.telegram.framework.commands.interfaces;
 
-public interface CloseCommand {
+public interface CloseCommand extends Command {
 }

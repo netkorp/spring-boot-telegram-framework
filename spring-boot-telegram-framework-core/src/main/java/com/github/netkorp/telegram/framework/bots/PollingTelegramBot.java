@@ -16,10 +16,6 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 @Component
 public class PollingTelegramBot extends TelegramLongPollingBot {
 
-    public static final String HELP_COMMAND_NAME = "description";
-    public static final String DONE_COMMAND_NAME = "done";
-    public static final String EXIT_COMMAND_NAME = "close";
-
     private String botUsername;
     private String botToken;
 
@@ -59,20 +55,12 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
                     // Command ID is the unique free command
                     if ("/whoami".equals(command)) {
                         commandManager.getCommand(command).execute(update);
+                        return;
                     }
 
                     // For the rest of commands we have to check if the chat is authorized
                     if (securityManager.isAuthorized(idChat)) {
-                        switch (command) {
-                            case HELP_COMMAND_NAME:
-                                commandManager.getCommand(command).execute(update);
-                                break;
-                            case "/whoami":
-                                break;
-                            default:
-                                processMessage(update);
-                                break;
-                        }
+                        processMessage(update);
                     }
 
                     return;
@@ -85,7 +73,7 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
             } catch (CommandNotFound commandNotFound) {
                 sendMessage(commandNotFound.getMessage(), idChat);
                 try {
-                    commandManager.getCommand(HELP_COMMAND_NAME).execute(update);
+                    commandManager.getHelpCommand().execute(update);
                 } catch (CommandNotFound commandNotFound1) {
                     // Do nothing
                 }
@@ -123,18 +111,27 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
         if (update.getMessage().hasText()) {
             String commandText = update.getMessage().getText().toLowerCase();
 
-            // Commands exit and done are basic commands (reserved by the system)
-            if (EXIT_COMMAND_NAME.equals(commandText) || DONE_COMMAND_NAME
-                    .equals(commandText)) {
-                try {
-                    commandManager.getCommand(commandText).execute(update);
-                } catch (CommandNotFound commandNotFound) {
-                    // Do nothing
+            // Command Close is a basic command (reserved by the system)
+            try {
+                if (commandManager.getCloseCommand().getName().equals(commandText)) {
+                    commandManager.getCloseCommand().execute(update);
+                    return;
                 }
-                return;
+            } catch (CommandNotFound commandNotFound) {
+                // Do nothing
             }
 
-            // Trying to get a commands
+            // Command Done is a basic command (reserved by the system)
+            try {
+                if (commandManager.getDoneCommand().getName().equals(commandText)) {
+                    commandManager.getDoneCommand().execute(update);
+                    return;
+                }
+            } catch (CommandNotFound commandNotFound) {
+                // Do nothing
+            }
+
+            // Trying to get commands
             try {
                 Command command = commandManager.getCommand(commandText);
 
