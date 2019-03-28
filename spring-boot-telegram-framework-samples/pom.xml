@@ -21,4 +21,29 @@
         <module>my-name</module>
     </modules>
 
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <fork>true</fork>
+                    <executable>true</executable>
+                    <embeddedLaunchScriptProperties>
+                        <logFolder>/dev/</logFolder>
+                        <logFilename>null</logFilename>
+                    </embeddedLaunchScriptProperties>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <showDeprecation>true</showDeprecation>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
