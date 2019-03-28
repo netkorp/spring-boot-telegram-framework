@@ -1,4 +1,4 @@
-package com.github.netkorp.telegram.framework.commands.basic;
+package com.github.netkorp.telegram.framework.commands.multistage;
 
 import com.github.netkorp.telegram.framework.bots.PollingTelegramBot;
 import com.github.netkorp.telegram.framework.commands.abstracts.AbstractCommand;
@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Component
-public class CloseCommand extends AbstractCommand {
+public class DoneCommand extends AbstractCommand {
 
     /**
      * Returns the commands that will be executed on the chat.
@@ -16,7 +16,7 @@ public class CloseCommand extends AbstractCommand {
      */
     @Override
     public String getName() {
-        return "exit";
+        return "done";
     }
 
     /**
@@ -29,7 +29,7 @@ public class CloseCommand extends AbstractCommand {
         final Long idChat = update.getMessage().getChatId();
 
         try {
-            if (commandManager.getActiveCommand(idChat).close(update)) {
+            if (commandManager.getActiveCommand(idChat).done(update)) {
                 commandManager.removeActiveCommand(idChat);
             }
         } catch (CommandNotActive commandNotActive) {
@@ -49,6 +49,6 @@ public class CloseCommand extends AbstractCommand {
      */
     @Override
     public String help() {
-        return "Closes the current task. It should be a commands active before.";
+        return "Marks as finished the current task. There should be an active commands before.";
     }
 }
