@@ -3,12 +3,15 @@ package com.github.netkorp.telegram.framework.commands.multistage;
 import com.github.netkorp.telegram.framework.annotations.CommandGroup;
 import com.github.netkorp.telegram.framework.bots.PollingTelegramBot;
 import com.github.netkorp.telegram.framework.commands.abstracts.AbstractCommand;
+import com.github.netkorp.telegram.framework.commands.interfaces.MultistageCommand;
 import com.github.netkorp.telegram.framework.exceptions.*;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Component
 @CommandGroup("Multistage")
+@ConditionalOnBean(MultistageCommand.class)
 public class DoneCommand extends AbstractCommand {
 
     /**
