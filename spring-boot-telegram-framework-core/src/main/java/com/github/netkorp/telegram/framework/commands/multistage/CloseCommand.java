@@ -49,6 +49,6 @@ public class CloseCommand extends AbstractCommand {
      */
     @Override
     public String help() {
-        return "Closes the current task. It should be a commands active before.";
+        return "Closes the current task. There should be an active commands before.";
     }
 }
