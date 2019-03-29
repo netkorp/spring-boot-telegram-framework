@@ -2,9 +2,12 @@ package com.github.netkorp.telegram.framework.bots;
 
 import com.github.netkorp.telegram.framework.commands.interfaces.Command;
 import com.github.netkorp.telegram.framework.commands.interfaces.MultistageCommand;
-import com.github.netkorp.telegram.framework.exceptions.*;
+import com.github.netkorp.telegram.framework.exceptions.CommandNotActive;
+import com.github.netkorp.telegram.framework.exceptions.CommandNotFound;
 import com.github.netkorp.telegram.framework.managers.CommandManager;
 import com.github.netkorp.telegram.framework.managers.SecurityManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -13,8 +16,12 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.lang.invoke.MethodHandles;
+
 @Component
 public class PollingTelegramBot extends TelegramLongPollingBot {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private String botUsername;
     private String botToken;
@@ -179,7 +186,7 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
         try {
             this.execute(message); // Call method to send the message
         } catch (TelegramApiException e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
     }
 }
