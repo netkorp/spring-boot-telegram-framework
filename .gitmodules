@@ -1,0 +1,3 @@
+[submodule "spring-boot-telegram-framework-docs"]
+	path = spring-boot-telegram-framework-docs
+	url = https://github.com/netkorp/spring-boot-telegram-framework.wiki.git
