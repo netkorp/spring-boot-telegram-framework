@@ -11,8 +11,10 @@ import com.github.netkorp.telegram.framework.commands.interfaces.MultistageComma
 import com.github.netkorp.telegram.framework.exceptions.CommandNotActive;
 import com.github.netkorp.telegram.framework.exceptions.CommandNotFound;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,22 +36,22 @@ public class CommandManager {
     private String helpCommand;
 
     @Autowired
-    public CommandManager(List<Command> commands, PollingTelegramBot bot) {
+    public CommandManager(List<Command> commands, PollingTelegramBot bot, @Value("${telegram.commands.free}") String freeCommands) {
         this.secureCommands = new HashMap<>();
         this.freeCommands = new HashMap<>();
 
         this.commandsByGroup = new TreeMap<>();
         this.activeCommand = new HashMap<>();
 
-        commands.forEach(command -> addCommand(command, bot));
+        commands.forEach(command -> addCommand(command, bot, Arrays.asList(freeCommands.split(","))));
     }
 
-    private void addCommand(Command command, PollingTelegramBot bot) {
+    private void addCommand(Command command, PollingTelegramBot bot, List<String> freeCommandNames) {
         command.setBot(bot);
         command.setCommandManager(this);
         this.secureCommands.put(command.command(), command);
 
-        if (command.getClass().isAnnotationPresent(FreeCommand.class)) {
+        if (isFreeCommand(command, freeCommandNames)) {
             this.freeCommands.put(command.command(), command);
         }
 
@@ -69,6 +71,12 @@ public class CommandManager {
         commandList.add(command);
 
         this.commandsByGroup.put(group, commandList);
+    }
+
+    private boolean isFreeCommand(Command command, List<String> freeCommandNames) {
+        return freeCommandNames.contains(command.getName())
+                || freeCommandNames.contains(command.command())
+                || command.getClass().isAnnotationPresent(FreeCommand.class);
     }
 
     /**

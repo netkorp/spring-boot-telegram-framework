@@ -1,14 +1,12 @@
 package com.github.netkorp.telegram.framework.commands.basic;
 
 import com.github.netkorp.telegram.framework.annotations.CommandGroup;
-import com.github.netkorp.telegram.framework.annotations.FreeCommand;
 import com.github.netkorp.telegram.framework.commands.abstracts.AbstractCommand;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Component
 @CommandGroup("Basic")
-@FreeCommand
 public class WhoAmICommand extends AbstractCommand {
 
     /**
