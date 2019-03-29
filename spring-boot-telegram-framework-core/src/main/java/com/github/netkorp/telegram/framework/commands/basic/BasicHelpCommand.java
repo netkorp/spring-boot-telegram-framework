@@ -2,6 +2,7 @@ package com.github.netkorp.telegram.framework.commands.basic;
 
 import com.github.netkorp.telegram.framework.annotations.CommandGroup;
 import com.github.netkorp.telegram.framework.commands.abstracts.AbstractCommand;
+import com.github.netkorp.telegram.framework.commands.interfaces.HelpCommand;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.stereotype.Component;
@@ -11,8 +12,18 @@ import java.util.StringJoiner;
 
 @Component
 @CommandGroup("Basic")
-@ConditionalOnSingleCandidate(com.github.netkorp.telegram.framework.commands.interfaces.HelpCommand.class)
-public class HelpCommand extends AbstractCommand implements com.github.netkorp.telegram.framework.commands.interfaces.HelpCommand {
+@ConditionalOnSingleCandidate(HelpCommand.class)
+public class BasicHelpCommand extends AbstractCommand implements HelpCommand {
+
+    /**
+     * Returns the commands that will be executed on the chat.
+     *
+     * @return Command to be executed.
+     */
+    @Override
+    public String getName() {
+        return "help";
+    }
 
     /**
      * Processes the data of the commands.

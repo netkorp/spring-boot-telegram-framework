@@ -2,6 +2,7 @@ package com.github.netkorp.telegram.framework.commands.multistage;
 
 import com.github.netkorp.telegram.framework.annotations.CommandGroup;
 import com.github.netkorp.telegram.framework.commands.abstracts.AbstractCommand;
+import com.github.netkorp.telegram.framework.commands.interfaces.CloseCommand;
 import com.github.netkorp.telegram.framework.commands.interfaces.MultistageCommand;
 import com.github.netkorp.telegram.framework.exceptions.CommandNotActive;
 import com.github.netkorp.telegram.framework.exceptions.CommandNotFound;
@@ -13,8 +14,18 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @Component
 @CommandGroup("Multistage")
 @ConditionalOnBean(MultistageCommand.class)
-@ConditionalOnSingleCandidate(com.github.netkorp.telegram.framework.commands.interfaces.CloseCommand.class)
-public class CloseCommand extends AbstractCommand implements com.github.netkorp.telegram.framework.commands.interfaces.CloseCommand {
+@ConditionalOnSingleCandidate(CloseCommand.class)
+public class MultistageCloseCommand extends AbstractCommand implements CloseCommand {
+
+    /**
+     * Returns the commands that will be executed on the chat.
+     *
+     * @return Command to be executed.
+     */
+    @Override
+    public String getName() {
+        return "close";
+    }
 
     /**
      * Processes the data of the commands.
