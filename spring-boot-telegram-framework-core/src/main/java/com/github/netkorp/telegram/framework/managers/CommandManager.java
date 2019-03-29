@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 public class CommandManager {
@@ -124,16 +125,43 @@ public class CommandManager {
         return activeCommand.containsKey(idChat);
     }
 
-    public Command getCloseCommand() throws CommandNotFound {
-        return getCommand(this.closeCommand);
+    /**
+     * Returns the {@link CloseCommand} if it exists.
+     *
+     * @return The {@link CloseCommand} instance.
+     */
+    public Optional<Command> getCloseCommand() {
+        try {
+            return Optional.ofNullable(getCommand(this.closeCommand));
+        } catch (CommandNotFound commandNotFound) {
+            return Optional.empty();
+        }
     }
 
-    public Command getDoneCommand() throws CommandNotFound {
-        return getCommand(this.doneCommand);
+    /**
+     * Returns the {@link DoneCommand} if it exists.
+     *
+     * @return The {@link DoneCommand} instance.
+     */
+    public Optional<Command> getDoneCommand() {
+        try {
+            return Optional.ofNullable(getCommand(this.doneCommand));
+        } catch (CommandNotFound commandNotFound) {
+            return Optional.empty();
+        }
     }
 
-    public Command getHelpCommand() throws CommandNotFound {
-        return getCommand(this.helpCommand);
+    /**
+     * Returns the {@link HelpCommand} if it exists.
+     *
+     * @return The {@link HelpCommand} instance.
+     */
+    public Optional<Command> getHelpCommand() {
+        try {
+            return Optional.ofNullable(getCommand(this.helpCommand));
+        } catch (CommandNotFound commandNotFound) {
+            return Optional.empty();
+        }
     }
 
     /**

@@ -17,6 +17,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.lang.invoke.MethodHandles;
+import java.util.Optional;
 
 @Component
 public class PollingTelegramBot extends TelegramLongPollingBot {
@@ -74,11 +75,7 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
                 }
             } catch (CommandNotFound commandNotFound) {
                 sendMessage(commandNotFound.getMessage(), idChat);
-                try {
-                    commandManager.getHelpCommand().execute(update);
-                } catch (CommandNotFound commandNotFound1) {
-                    // Do nothing
-                }
+                commandManager.getHelpCommand().ifPresent(command -> command.execute(update));
             }
         }
     }
@@ -154,21 +151,24 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
      * Checks if the entered text matches with some reserved command.
      *
      * @param commandText Text entered by the user.
-     * @param update The message sent by the user.
+     * @param update      The message sent by the user.
      * @return If some reserved command was executed or not.
      */
     private boolean reservedCommands(String commandText, Update update) {
-        try {
-            if (commandManager.getCloseCommand().getName().equals(commandText)) {
-                commandManager.getCloseCommand().execute(update);
-                return true;
-            }
+        Optional<Command> closeCommand = commandManager.getCloseCommand()
+                .filter(command -> command.command().equals(commandText));
 
-            if (commandManager.getDoneCommand().getName().equals(commandText)) {
-                commandManager.getDoneCommand().execute(update);
-                return true;
-            }
-        } catch (CommandNotFound ignored) {
+        if (closeCommand.isPresent()) {
+            closeCommand.get().execute(update);
+            return true;
+        }
+
+        Optional<Command> doneCommand = commandManager.getDoneCommand()
+                .filter(command -> command.command().equals(commandText));
+
+        if (doneCommand.isPresent()) {
+            doneCommand.get().execute(update);
+            return true;
         }
 
         return false;

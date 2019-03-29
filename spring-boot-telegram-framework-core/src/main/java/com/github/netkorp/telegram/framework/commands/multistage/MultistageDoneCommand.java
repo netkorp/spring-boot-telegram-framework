@@ -5,7 +5,6 @@ import com.github.netkorp.telegram.framework.commands.abstracts.AbstractCommand;
 import com.github.netkorp.telegram.framework.commands.interfaces.DoneCommand;
 import com.github.netkorp.telegram.framework.commands.interfaces.MultistageCommand;
 import com.github.netkorp.telegram.framework.exceptions.CommandNotActive;
-import com.github.netkorp.telegram.framework.exceptions.CommandNotFound;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.stereotype.Component;
@@ -42,11 +41,7 @@ public class MultistageDoneCommand extends AbstractCommand implements DoneComman
             }
         } catch (CommandNotActive commandNotActive) {
             bot.sendMessage(commandNotActive.getMessage(), idChat);
-            try {
-                commandManager.getHelpCommand().execute(update);
-            } catch (CommandNotFound commandNotFound) {
-                // Do nothing
-            }
+            commandManager.getHelpCommand().ifPresent(command -> command.execute(update));
         }
     }
 
