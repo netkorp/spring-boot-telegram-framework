@@ -32,11 +32,11 @@ public class BasicHelpCommand extends AbstractCommand implements HelpCommand {
      */
     @Override
     public void execute(Update update) {
-        StringJoiner stringJoiner = new StringJoiner("\n");
-        stringJoiner.add("You can control me by sending these commands:\n");
+        StringJoiner stringJoiner = new StringJoiner(System.lineSeparator());
+        stringJoiner.add("You can control me by sending these commands:" + System.lineSeparator());
         commandManager.getCommandsByGroup().forEach((group, commands) -> {
             if (!Strings.isEmpty(group)) {
-                stringJoiner.add(String.format("\n<b>%s</b>", group));
+                stringJoiner.add(String.format("%n<b>%s</b>", group));
             }
             commands.forEach(command -> stringJoiner.add(String.format("%s - %s", command.command(), command.description())));
         });
