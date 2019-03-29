@@ -128,7 +128,7 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
 
             // Trying to get commands
             try {
-                Command command = commandManager.getSecureCommand(commandText);
+                Command command = commandManager.getCommand(commandText);
 
                 // If there is no active commands defined, we understand this is an attempt to define/execute one
                 if (!commandManager.hasActiveCommand(idChat)) {

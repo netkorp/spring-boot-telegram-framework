@@ -2,13 +2,18 @@ package com.github.netkorp.telegram.framework.commands.basic;
 
 import com.github.netkorp.telegram.framework.annotations.CommandGroup;
 import com.github.netkorp.telegram.framework.commands.abstracts.AbstractCommand;
+import com.github.netkorp.telegram.framework.commands.interfaces.Command;
 import com.github.netkorp.telegram.framework.commands.interfaces.HelpCommand;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.SortedMap;
 import java.util.StringJoiner;
+import java.util.TreeMap;
 
 @Component
 @CommandGroup("Basic")
@@ -34,13 +39,35 @@ public class BasicHelpCommand extends AbstractCommand implements HelpCommand {
     public void execute(Update update) {
         StringJoiner stringJoiner = new StringJoiner(System.lineSeparator());
         stringJoiner.add("You can control me by sending these commands:" + System.lineSeparator());
-        commandManager.getCommandsByGroup().forEach((group, commands) -> {
+        commandsByGroup().forEach((group, commands) -> {
             if (!Strings.isEmpty(group)) {
                 stringJoiner.add(String.format("%n<b>%s</b>", group));
             }
             commands.forEach(command -> stringJoiner.add(String.format("%s - %s", command.command(), command.description())));
         });
         bot.sendMessage(stringJoiner.toString(), update.getMessage().getChatId(), true);
+    }
+
+    /**
+     * Groups the commands by groups.
+     *
+     * @return The grouped commands.
+     */
+    private SortedMap<String, List<Command>> commandsByGroup() {
+        SortedMap<String, List<Command>> commandsByGroup = new TreeMap<>();
+
+        commandManager.getAvailableCommands().forEach(command -> {
+            // Groups
+            String group = command.getClass().isAnnotationPresent(CommandGroup.class) ?
+                    command.getClass().getAnnotation(CommandGroup.class).value() : "";
+
+            List<Command> commandList = commandsByGroup.getOrDefault(group, new LinkedList<>());
+            commandList.add(command);
+
+            commandsByGroup.put(group, commandList);
+        });
+
+        return commandsByGroup;
     }
 
     /**
