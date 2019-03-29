@@ -137,11 +137,20 @@ public class CommandManager {
     }
 
     /**
-     * Returns the list with the available commands.
+     * Returns a list with the available commands.
      *
      * @return Available commands.
      */
     public Collection<Command> getAvailableCommands() {
         return commands.values();
+    }
+
+    /**
+     * Returns a list with the available free commands.
+     *
+     * @return Available free commands.
+     */
+    public Collection<Command> getAvailableFreeCommands() {
+        return freeCommands.values();
     }
 }
