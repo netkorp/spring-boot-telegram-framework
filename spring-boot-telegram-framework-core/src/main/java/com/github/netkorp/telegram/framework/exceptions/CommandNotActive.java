@@ -11,6 +11,6 @@ public class CommandNotActive extends Exception {
      * call to {@link #initCause}.
      */
     public CommandNotActive() {
-        super("There is no an active commands");
+        super("There is no an active command");
     }
 }

@@ -11,6 +11,6 @@ public class CommandNotFound extends Exception {
      * call to {@link #initCause}.
      */
     public CommandNotFound() {
-        super("This commands is not valid");
+        super("This command is not valid");
     }
 }
