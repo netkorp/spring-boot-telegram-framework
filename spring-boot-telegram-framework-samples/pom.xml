@@ -19,6 +19,7 @@
 
     <modules>
         <module>simple-command</module>
+        <module>multistage-command</module>
     </modules>
 
     <build>
