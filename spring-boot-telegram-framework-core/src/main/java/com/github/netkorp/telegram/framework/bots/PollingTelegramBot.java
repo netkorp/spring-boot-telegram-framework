@@ -113,24 +113,8 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
         if (update.getMessage().hasText()) {
             String commandText = update.getMessage().getText().toLowerCase();
 
-            // Command Close is a basic command (reserved by the system)
-            try {
-                if (commandManager.getCloseCommand().getName().equals(commandText)) {
-                    commandManager.getCloseCommand().execute(update);
-                    return;
-                }
-            } catch (CommandNotFound commandNotFound) {
-                // Do nothing
-            }
-
-            // Command Done is a basic command (reserved by the system)
-            try {
-                if (commandManager.getDoneCommand().getName().equals(commandText)) {
-                    commandManager.getDoneCommand().execute(update);
-                    return;
-                }
-            } catch (CommandNotFound commandNotFound) {
-                // Do nothing
+            if (reservedCommands(commandText, update)) {
+                return;
             }
 
             // Trying to get commands
@@ -164,6 +148,30 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
         } catch (CommandNotActive commandNotActive) {
             sendMessage(commandNotActive.getMessage(), idChat);
         }
+    }
+
+    /**
+     * Checks if the entered text matches with some reserved command.
+     *
+     * @param commandText Text entered by the user.
+     * @param update The message sent by the user.
+     * @return If some reserved command was executed or not.
+     */
+    private boolean reservedCommands(String commandText, Update update) {
+        try {
+            if (commandManager.getCloseCommand().getName().equals(commandText)) {
+                commandManager.getCloseCommand().execute(update);
+                return true;
+            }
+
+            if (commandManager.getDoneCommand().getName().equals(commandText)) {
+                commandManager.getDoneCommand().execute(update);
+                return true;
+            }
+        } catch (CommandNotFound ignored) {
+        }
+
+        return false;
     }
 
     /**
