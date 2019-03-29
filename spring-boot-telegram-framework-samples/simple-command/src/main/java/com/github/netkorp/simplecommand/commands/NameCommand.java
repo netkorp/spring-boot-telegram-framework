@@ -1,4 +1,4 @@
-package com.github.netkorp.myname.commands;
+package com.github.netkorp.simplecommand.commands;
 
 import com.github.netkorp.telegram.framework.commands.abstracts.AbstractCommand;
 import org.springframework.stereotype.Component;

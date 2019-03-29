@@ -18,7 +18,7 @@
     </parent>
 
     <modules>
-        <module>my-name</module>
+        <module>simple-command</module>
     </modules>
 
     <build>
