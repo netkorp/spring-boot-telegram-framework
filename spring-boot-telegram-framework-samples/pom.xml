@@ -20,6 +20,7 @@
     <modules>
         <module>simple-command</module>
         <module>multistage-command</module>
+        <module>override-basic-command</module>
     </modules>
 
     <build>
