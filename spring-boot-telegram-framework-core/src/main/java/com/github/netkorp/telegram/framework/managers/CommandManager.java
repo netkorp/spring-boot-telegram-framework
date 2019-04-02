@@ -1,6 +1,6 @@
 package com.github.netkorp.telegram.framework.managers;
 
-import com.github.netkorp.telegram.framework.annotations.FreeCommand;
+import com.github.netkorp.telegram.framework.annotations.TelegramCommand;
 import com.github.netkorp.telegram.framework.bots.PollingTelegramBot;
 import com.github.netkorp.telegram.framework.commands.interfaces.CloseCommand;
 import com.github.netkorp.telegram.framework.commands.interfaces.Command;
@@ -38,31 +38,43 @@ public class CommandManager {
 
         this.activeCommand = new HashMap<>();
 
-        commands.forEach(command -> addCommand(command, bot, Arrays.asList(freeCommands.split(","))));
+        commands.stream()
+                .filter(item -> item.getClass().isAnnotationPresent(TelegramCommand.class))
+                .forEach(command -> addCommand(command, bot, Arrays.asList(freeCommands.split(","))));
     }
 
     private void addCommand(Command command, PollingTelegramBot bot, List<String> freeCommandNames) {
         command.setBot(bot);
         command.setCommandManager(this);
-        this.commands.put(command.command(), command);
+        this.commands.put(getCommand(command), command);
 
         if (isFreeCommand(command, freeCommandNames)) {
-            this.freeCommands.put(command.command(), command);
+            this.freeCommands.put(getCommand(command), command);
         }
 
         if (command instanceof CloseCommand) {
-            closeCommand = command.command();
+            closeCommand = getCommand(command);
         } else if (command instanceof DoneCommand) {
-            doneCommand = command.command();
+            doneCommand = getCommand(command);
         } else if (command instanceof HelpCommand) {
-            helpCommand = command.command();
+            helpCommand = getCommand(command);
         }
     }
 
     private boolean isFreeCommand(Command command, List<String> freeCommandNames) {
-        return freeCommandNames.contains(command.getName())
-                || freeCommandNames.contains(command.command())
-                || command.getClass().isAnnotationPresent(FreeCommand.class);
+        return freeCommandNames.contains(getCommandName(command))
+                || freeCommandNames.contains(getCommand(command))
+                || command.getClass().getAnnotation(TelegramCommand.class).free();
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    public static String getCommandName(Command command) {
+        return command.getClass().getAnnotation(TelegramCommand.class).name();
+    }
+
+    public static String getCommand(Command command) {
+        String commandName = getCommandName(command);
+        return commandName.startsWith("/") ? commandName : String.format("/%s", commandName);
     }
 
     /**

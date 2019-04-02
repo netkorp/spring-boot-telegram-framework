@@ -1,14 +1,16 @@
 package com.github.netkorp.telegram.framework.commands.basic;
 
-import com.github.netkorp.telegram.framework.annotations.CommandGroup;
+import com.github.netkorp.telegram.framework.annotations.TelegramCommand;
 import com.github.netkorp.telegram.framework.commands.abstracts.AbstractCommand;
 import com.github.netkorp.telegram.framework.commands.interfaces.Command;
 import com.github.netkorp.telegram.framework.commands.interfaces.HelpCommand;
+import com.github.netkorp.telegram.framework.condition.ExcludeCondition;
+import com.github.netkorp.telegram.framework.managers.CommandManager;
 import com.github.netkorp.telegram.framework.managers.SecurityManager;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Conditional;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.Collection;
@@ -18,8 +20,8 @@ import java.util.SortedMap;
 import java.util.StringJoiner;
 import java.util.TreeMap;
 
-@Component
-@CommandGroup("Basic")
+@TelegramCommand(name = "help", group = "Basic")
+@Conditional(ExcludeCondition.class)
 @ConditionalOnSingleCandidate(HelpCommand.class)
 public class BasicHelpCommand extends AbstractCommand implements HelpCommand {
 
@@ -28,16 +30,6 @@ public class BasicHelpCommand extends AbstractCommand implements HelpCommand {
     @Autowired
     public BasicHelpCommand(SecurityManager securityManager) {
         this.securityManager = securityManager;
-    }
-
-    /**
-     * Returns the commands that will be executed on the chat.
-     *
-     * @return Command to be executed.
-     */
-    @Override
-    public String getName() {
-        return "help";
     }
 
     /**
@@ -66,7 +58,7 @@ public class BasicHelpCommand extends AbstractCommand implements HelpCommand {
         if (!Strings.isEmpty(group)) {
             stringJoiner.add(String.format("<b>%s</b>", group));
         }
-        commands.forEach(command -> stringJoiner.add(String.format("%s - %s", command.command(), command.description())));
+        commands.forEach(command -> stringJoiner.add(String.format("%s - %s", CommandManager.getCommand(command), command.description())));
         return System.lineSeparator() + stringJoiner.toString();
     }
 
@@ -81,8 +73,7 @@ public class BasicHelpCommand extends AbstractCommand implements HelpCommand {
 
         commands.forEach(command -> {
             // Groups
-            String group = command.getClass().isAnnotationPresent(CommandGroup.class) ?
-                    command.getClass().getAnnotation(CommandGroup.class).value() : "";
+            String group = command.getClass().getAnnotation(TelegramCommand.class).group();
 
             List<Command> commandList = commandsByGroup.getOrDefault(group, new LinkedList<>());
             commandList.add(command);

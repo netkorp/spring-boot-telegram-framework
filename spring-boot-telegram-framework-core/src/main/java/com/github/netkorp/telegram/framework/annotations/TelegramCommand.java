@@ -1,5 +1,6 @@
 package com.github.netkorp.telegram.framework.annotations;
 
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Indexed;
 
 import java.lang.annotation.Documented;
@@ -12,10 +13,12 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Indexed
-public @interface CommandGroup {
+@Component
+public @interface TelegramCommand {
 
-    /**
-     * @return
-     */
-    String value() default "";
+    String name();
+
+    String group() default "";
+
+    boolean free() default false;
 }

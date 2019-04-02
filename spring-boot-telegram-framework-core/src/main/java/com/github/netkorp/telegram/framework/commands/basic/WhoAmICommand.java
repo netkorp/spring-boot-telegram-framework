@@ -1,13 +1,14 @@
 package com.github.netkorp.telegram.framework.commands.basic;
 
-import com.github.netkorp.telegram.framework.annotations.CommandGroup;
+import com.github.netkorp.telegram.framework.annotations.TelegramCommand;
 import com.github.netkorp.telegram.framework.commands.abstracts.AbstractCommand;
-import org.springframework.stereotype.Component;
+import com.github.netkorp.telegram.framework.condition.ExcludeCondition;
+import org.springframework.context.annotation.Conditional;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-@Component
-@CommandGroup("Basic")
-public class WhoAmICommand extends AbstractCommand {
+@TelegramCommand(name = "whoami", group = "Basic", free = true)
+@Conditional(ExcludeCondition.class)
+public final class WhoAmICommand extends AbstractCommand {
 
     /**
      * Processes the data of the commands.

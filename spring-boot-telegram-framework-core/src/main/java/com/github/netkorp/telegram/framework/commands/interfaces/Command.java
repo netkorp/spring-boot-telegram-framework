@@ -7,23 +7,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 public interface Command {
 
     /**
-     * Returns the commands that will be executed on the chat.
-     *
-     * @return Command to be executed.
-     */
-    default String getName() {
-        return this.getClass().getSimpleName().toLowerCase().replace("command", "");
-    }
-
-    /**
-     *
-     * @return
-     */
-    default String command() {
-        return getName().startsWith("/") ? getName() : String.format("/%s", getName());
-    }
-
-    /**
      * Defines the Telegram bots to be used.
      *
      * @param bot Telegram bots.

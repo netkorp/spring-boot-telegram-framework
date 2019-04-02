@@ -1,11 +1,11 @@
 package com.github.netkorp.multistagecommand.commands;
 
+import com.github.netkorp.telegram.framework.annotations.TelegramCommand;
 import com.github.netkorp.telegram.framework.commands.abstracts.AbstractMultistageCommand;
 import org.apache.logging.log4j.util.Strings;
-import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-@Component
+@TelegramCommand(name = "data")
 public class DataCommand extends AbstractMultistageCommand {
 
     /**

@@ -1,10 +1,10 @@
 package com.github.netkorp.simplecommand.commands;
 
+import com.github.netkorp.telegram.framework.annotations.TelegramCommand;
 import com.github.netkorp.telegram.framework.commands.abstracts.AbstractCommand;
-import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-@Component
+@TelegramCommand(name = "name")
 public class NameCommand extends AbstractCommand {
 
     /**
