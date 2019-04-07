@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
 
     <name>override-basic-command</name>
-    <description>Demo project for Spring Boot</description>
+    <description>Sample of how to override the basic commands included in the framework.</description>
     <url>https://github.com/netkorp/spring-boot-telegram-framework/tree/master/spring-boot-telegram-framework-samples/override-basic-command</url>
 
     <parent>

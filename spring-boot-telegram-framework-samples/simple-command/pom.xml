@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
 
     <name>simple-command</name>
-    <description>Demo project for Spring Boot</description>
+    <description>Sample of how to create a simple command.</description>
     <url>https://github.com/netkorp/spring-boot-telegram-framework/tree/master/spring-boot-telegram-framework-samples/simple-command</url>
 
     <parent>

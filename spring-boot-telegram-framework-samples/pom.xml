@@ -9,7 +9,7 @@
     <packaging>pom</packaging>
 
     <name>spring-boot-telegram-framework-samples</name>
-    <description>Demo project for Spring Boot</description>
+    <description>Submodule for Spring Boot Telegram Framework that contains all of the samples provided by this tool.</description>
     <url>https://github.com/netkorp/spring-boot-telegram-framework/tree/master/spring-boot-telegram-framework-samples</url>
 
     <parent>

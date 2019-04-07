@@ -17,7 +17,7 @@
     <packaging>pom</packaging>
 
     <name>spring-boot-telegram-framework</name>
-    <description>Demo project for Spring Boot</description>
+    <description>This project contains the all submodules provided by Spring Boot Telegram Framework.</description>
     <url>https://github.com/netkorp/spring-boot-telegram-framework</url>
 
     <properties>

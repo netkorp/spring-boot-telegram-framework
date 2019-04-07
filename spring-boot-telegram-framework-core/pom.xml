@@ -8,7 +8,7 @@
   <version>1.0.0</version>
 
   <name>spring-boot-telegram-framework-core</name>
-  <description>Demo project for Spring Boot</description>
+  <description>Framework for creating Telegram Bots using Spring Boot.</description>
   <url>https://github.com/netkorp/spring-boot-telegram-framework/tree/master/spring-boot-telegram-framework-core</url>
 
   <parent>

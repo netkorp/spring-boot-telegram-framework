@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
 
     <name>multistage-command</name>
-    <description>Demo project for Spring Boot</description>
+    <description>Sample of how to create multistage commands.</description>
     <url>https://github.com/netkorp/spring-boot-telegram-framework/tree/master/spring-boot-telegram-framework-samples/multistage-command</url>
 
     <parent>
