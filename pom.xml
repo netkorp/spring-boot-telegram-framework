@@ -18,6 +18,7 @@
 
     <name>spring-boot-telegram-framework</name>
     <description>Demo project for Spring Boot</description>
+    <url>https://github.com/netkorp/spring-boot-telegram-framework</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -9,6 +9,7 @@
 
   <name>spring-boot-telegram-framework-core</name>
   <description>Demo project for Spring Boot</description>
+  <url>https://github.com/netkorp/spring-boot-telegram-framework/tree/master/spring-boot-telegram-framework-core</url>
 
   <parent>
     <groupId>com.github.netkorp</groupId>

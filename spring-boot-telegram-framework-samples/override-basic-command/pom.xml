@@ -9,6 +9,7 @@
 
     <name>override-basic-command</name>
     <description>Demo project for Spring Boot</description>
+    <url>https://github.com/netkorp/spring-boot-telegram-framework/tree/master/spring-boot-telegram-framework-samples/override-basic-command</url>
 
     <parent>
         <groupId>com.github.netkorp</groupId>
