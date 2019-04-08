@@ -20,22 +20,33 @@ import java.util.SortedMap;
 import java.util.StringJoiner;
 import java.util.TreeMap;
 
+/**
+ * Displays the bot's help.
+ */
 @TelegramCommand(name = "help", group = "Basic")
 @Conditional(ExcludeCondition.class)
 @ConditionalOnSingleCandidate(HelpCommand.class)
 public class BasicHelpCommand extends AbstractCommand implements HelpCommand {
 
+    /**
+     * The component to know which user is authorized.
+     */
     private final SecurityManager securityManager;
 
+    /**
+     * Constructs a new {@link BasicHelpCommand} instance with the {@link SecurityManager} component instance.
+     *
+     * @param securityManager the {@link SecurityManager} component instance.
+     */
     @Autowired
     public BasicHelpCommand(SecurityManager securityManager) {
         this.securityManager = securityManager;
     }
 
     /**
-     * Processes the data of the commands.
+     * Processes the data sent by the users.
      *
-     * @param update The received message.
+     * @param update the received message.
      */
     @Override
     public void execute(Update update) {
@@ -47,11 +58,11 @@ public class BasicHelpCommand extends AbstractCommand implements HelpCommand {
     }
 
     /**
-     * Returns the help for a given group of commands.
+     * Returns the help for the group of commands.
      *
-     * @param group The name of the group.
-     * @param commands The commands into the group.
-     * @return The help.
+     * @param group    the name of the group.
+     * @param commands the commands into the group.
+     * @return the help for the group.
      */
     private String helpForGroup(String group, List<Command> commands) {
         StringJoiner stringJoiner = new StringJoiner(System.lineSeparator());
@@ -63,10 +74,10 @@ public class BasicHelpCommand extends AbstractCommand implements HelpCommand {
     }
 
     /**
-     * Groups the commands by groups.
+     * Organizes the available commands into groups.
      *
-     * @param commands A list with all the commands.
-     * @return The grouped commands.
+     * @param commands the list with all the available commands.
+     * @return the available commands in groups sorted by the group's name.
      */
     private SortedMap<String, List<Command>> commandsByGroup(Collection<Command> commands) {
         SortedMap<String, List<Command>> commandsByGroup = new TreeMap<>();
@@ -85,10 +96,10 @@ public class BasicHelpCommand extends AbstractCommand implements HelpCommand {
     }
 
     /**
-     * The commands to be shown on help.
+     * Returns the list of available commands for the user. It takes into account whether the user is authorized or not.
      *
-     * @param chatId The ID of current chat.
-     * @return The commands.
+     * @param chatId the identification of the user's chat.
+     * @return the list of available commands.
      */
     private Collection<Command> getAvailableCommands(Long chatId) {
         if (securityManager.isAuthorized(chatId)) {
@@ -99,9 +110,9 @@ public class BasicHelpCommand extends AbstractCommand implements HelpCommand {
     }
 
     /**
-     * Returns the description of the commands.
+     * Returns the command's description, used to be displayed in help message.
      *
-     * @return The description.
+     * @return the command's description.
      */
     @Override
     public String description() {

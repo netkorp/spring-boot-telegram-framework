@@ -1,4 +1,9 @@
 package com.github.netkorp.telegram.framework.commands.interfaces;
 
-public interface DoneCommand extends Command{
+import org.telegram.telegrambots.meta.api.objects.Update;
+
+/**
+ * Indicates the command is the command to invoke {@link MultistageCommand#done(Update)} of the active command.
+ */
+public interface DoneCommand extends Command {
 }

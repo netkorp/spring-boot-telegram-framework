@@ -6,14 +6,17 @@ import com.github.netkorp.telegram.framework.condition.ExcludeCondition;
 import org.springframework.context.annotation.Conditional;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+/**
+ * Shows the chat identification for user who invoked the command.
+ */
 @TelegramCommand(name = "whoami", group = "Basic", free = true)
 @Conditional(ExcludeCondition.class)
 public final class WhoAmICommand extends AbstractCommand {
 
     /**
-     * Processes the data of the commands.
+     * Processes the data sent by the users.
      *
-     * @param update The received message.
+     * @param update the received message.
      */
     @Override
     public void execute(Update update) {
@@ -22,9 +25,9 @@ public final class WhoAmICommand extends AbstractCommand {
     }
 
     /**
-     * Returns the description of the commands.
+     * Returns the command's description, used to be displayed in help message.
      *
-     * @return The description.
+     * @return the command's description.
      */
     @Override
     public String description() {

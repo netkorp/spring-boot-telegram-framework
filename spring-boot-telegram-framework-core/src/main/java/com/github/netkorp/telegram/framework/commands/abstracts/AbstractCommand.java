@@ -4,15 +4,25 @@ import com.github.netkorp.telegram.framework.bots.PollingTelegramBot;
 import com.github.netkorp.telegram.framework.commands.interfaces.Command;
 import com.github.netkorp.telegram.framework.managers.CommandManager;
 
+/**
+ * Stores the basic components that the command needs.
+ */
 public abstract class AbstractCommand implements Command {
 
+    /**
+     * The bot that the command can use to share information with Telegram.
+     */
     protected PollingTelegramBot bot;
+
+    /**
+     * The component for managing all of the commands available in the bot.
+     */
     protected CommandManager commandManager;
 
     /**
-     * Defines the Telegram bots to be used.
+     * Sets the Telegram bot to be used.
      *
-     * @param bot Telegram bots.
+     * @param bot the Telegram bot.
      */
     @Override
     public void setBot(PollingTelegramBot bot) {
@@ -20,9 +30,9 @@ public abstract class AbstractCommand implements Command {
     }
 
     /**
-     * Defines the getName manager to be used.
+     * Sets the {@link CommandManager} to be used.
      *
-     * @param commandManager Command manager.
+     * @param commandManager the {@link CommandManager} instance.
      */
     @Override
     public void setCommandManager(CommandManager commandManager) {

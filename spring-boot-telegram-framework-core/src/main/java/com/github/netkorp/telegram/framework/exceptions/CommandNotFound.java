@@ -1,7 +1,7 @@
 package com.github.netkorp.telegram.framework.exceptions;
 
 /**
- * Thrown when a commands is not available.
+ * Indicates that the command is not available.
  */
 public class CommandNotFound extends Exception {
 

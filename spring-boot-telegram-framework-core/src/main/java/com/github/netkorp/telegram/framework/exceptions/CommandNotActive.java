@@ -1,7 +1,7 @@
 package com.github.netkorp.telegram.framework.exceptions;
 
 /**
- * Thrown when a commands is not available.
+ * Indicates that there is no active command.
  */
 public class CommandNotActive extends Exception {
 

@@ -9,15 +9,21 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+/**
+ * Indicates the active command is done. It invokes the {@link MultistageCommand#done(Update)} of the active command.
+ *
+ * @see MultistageCommand
+ * @see DoneCommand
+ */
 @TelegramCommand(name = "done", group = "Multistage")
 @ConditionalOnBean(MultistageCommand.class)
 @ConditionalOnSingleCandidate(DoneCommand.class)
 public class MultistageDoneCommand extends AbstractCommand implements DoneCommand {
 
     /**
-     * Processes the data of the commands.
+     * Processes the data sent by the users.
      *
-     * @param update The received message.
+     * @param update the received message.
      */
     @Override
     public void execute(Update update) {
@@ -34,9 +40,9 @@ public class MultistageDoneCommand extends AbstractCommand implements DoneComman
     }
 
     /**
-     * Returns the description of the commands.
+     * Returns the command's description, used to be displayed in help message.
      *
-     * @return The description.
+     * @return the command's description.
      */
     @Override
     public String description() {

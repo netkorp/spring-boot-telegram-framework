@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -19,17 +20,44 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.lang.invoke.MethodHandles;
 import java.util.Optional;
 
+/**
+ * Provides the component for sharing information with Telegram using
+ * <a href="https://core.telegram.org/bots/api#getupdates">long-polling</a> method.
+ * It has the responsibility to execute the proper command when an incoming message is received.
+ */
 @Component
 public class PollingTelegramBot extends TelegramLongPollingBot {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+    /**
+     * The bot's username.
+     */
     private String botUsername;
+
+    /**
+     * The bot's token.
+     */
     private String botToken;
 
+    /**
+     * The component to know which user is authorized.
+     */
     private final SecurityManager securityManager;
+
+    /**
+     * The component for managing all of the commands available in the bot.
+     */
     private CommandManager commandManager;
 
+    /**
+     * Constructs a new {@link PollingTelegramBot} instance with both username and token of the bot
+     * and the {@link SecurityManager} component instance.
+     *
+     * @param botUsername     the username of the bot.
+     * @param botToken        the token of the bot.
+     * @param securityManager the {@link SecurityManager} component instance.
+     */
     @Autowired
     public PollingTelegramBot(@Value("${telegram.bots.username}") String botUsername,
                               @Value("${telegram.bots.token}") String botToken,
@@ -39,15 +67,21 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
         this.securityManager = securityManager;
     }
 
+    /**
+     * Sets the {@link CommandManager} component.
+     *
+     * @param commandManager the {@link CommandManager} instance.
+     * @see #commandManager
+     */
     @Autowired
     public void setCommandManager(CommandManager commandManager) {
         this.commandManager = commandManager;
     }
 
     /**
-     * This method is called when receiving updates via GetUpdates method
+     * This method is called when receiving updates via GetUpdates method.
      *
-     * @param update Update received
+     * @param update Update received.
      */
     @Override
     public void onUpdateReceived(Update update) {
@@ -81,7 +115,9 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
     }
 
     /**
-     * Return bot username of this bot
+     * Returns the bot's username.
+     *
+     * @return the bot's username.
      */
     @Override
     public String getBotUsername() {
@@ -89,9 +125,9 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
     }
 
     /**
-     * Returns the token of the bot to be able to perform Telegram Api Requests
+     * Returns the bot's token.
      *
-     * @return Token of the bot
+     * @return the bot's token.
      */
     @Override
     public String getBotToken() {
@@ -99,9 +135,9 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
     }
 
     /**
-     * Process a given message.
+     * Processes a given message.
      *
-     * @param update The message sent by the user.
+     * @param update the message sent by the user.
      */
     private void processMessage(Update update) throws CommandNotFound {
         final Long idChat = update.getMessage().getChatId();
@@ -149,10 +185,11 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
 
     /**
      * Checks if the entered text matches with some reserved command.
+     * If this is the case it will execute the corresponding command.
      *
-     * @param commandText Text entered by the user.
-     * @param update      The message sent by the user.
-     * @return If some reserved command was executed or not.
+     * @param commandText the text entered by the user.
+     * @param update      the message sent by the user.
+     * @return {@code true} if some reserved command was executed; {@code false} otherwise.
      */
     private boolean reservedCommands(String commandText, Update update) {
         Optional<Command> closeCommand = commandManager.getCloseCommand()
@@ -175,17 +212,22 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
     }
 
     /**
-     * @param content Message content.
-     * @param idChat  Chat's ID.
+     * Sends a text message to Telegram.
+     * This is a shortcut for {@link #sendMessage(String, Long, boolean)} with HTML format disabled.
+     *
+     * @param content the message content.
+     * @param idChat  the chat identification to which the message should be sent.
      */
     public void sendMessage(String content, Long idChat) {
         sendMessage(content, idChat, false);
     }
 
     /**
-     * @param content Message content.
-     * @param idChat  Chat's ID.
-     * @param html    If HTML format is enabled or not.
+     * Sends a text message to Telegram. This is a shortcut for {@link #execute(BotApiMethod)}.
+     *
+     * @param content the message content.
+     * @param idChat  the chat identification to which the message should be sent.
+     * @param html    {@code true} if HTML format is enabled or {@code false} otherwise.
      */
     public void sendMessage(String content, Long idChat, boolean html) {
         SendMessage message = new SendMessage() // Create a SendMessage object with mandatory fields

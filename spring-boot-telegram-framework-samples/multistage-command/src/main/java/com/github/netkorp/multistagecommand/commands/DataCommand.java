@@ -9,9 +9,12 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 public class DataCommand extends AbstractMultistageCommand {
 
     /**
-     * Initializes a commands.
+     * Initializes the command. It's invoked where the command name matches with the text entered by the user.
+     * It returns {@code true} if the initialization was successful.
+     * In this case the command will be established as active command.
      *
-     * @param update The received message.
+     * @param update the received message.
+     * @return {@code true} if the initialization was successful; {@code false} otherwise.
      */
     @Override
     public boolean init(Update update) {
@@ -21,9 +24,13 @@ public class DataCommand extends AbstractMultistageCommand {
     }
 
     /**
-     * Indicates a commands is done.
+     * Indicates a command is done. It's invoked where the command
+     * {@link com.github.netkorp.telegram.framework.commands.multistage.MultistageDoneCommand} is invoked.
+     * It returns {@code true} if everything was fine during the process. In this case the command will be removed as active command.
      *
-     * @param update The received message.
+     * @param update the received message.
+     * @return {@code true} if everything was fine during the process; {@code false} otherwise.
+     * @see com.github.netkorp.telegram.framework.commands.multistage.MultistageDoneCommand
      */
     @Override
     public boolean done(Update update) {
@@ -32,9 +39,13 @@ public class DataCommand extends AbstractMultistageCommand {
     }
 
     /**
-     * Closes a commands.
+     * Closes a command. It's invoked where the command
+     * {@link com.github.netkorp.telegram.framework.commands.multistage.MultistageCloseCommand} is invoked.
+     * It returns {@code true} if everything was fine during the process. In this case the command will be removed as active command.
      *
-     * @param update The received message.
+     * @param update the received message.
+     * @return {@code true} if everything was fine during the process; {@code false} otherwise.
+     * @see com.github.netkorp.telegram.framework.commands.multistage.MultistageCloseCommand
      */
     @Override
     public boolean close(Update update) {
@@ -43,9 +54,9 @@ public class DataCommand extends AbstractMultistageCommand {
     }
 
     /**
-     * Processes the data of the commands.
+     * Processes the data sent by the users.
      *
-     * @param update The received message.
+     * @param update the received message.
      */
     @Override
     public void execute(Update update) {
@@ -65,9 +76,9 @@ public class DataCommand extends AbstractMultistageCommand {
     }
 
     /**
-     * Returns the description of the commands.
+     * Returns the command's description, used to be displayed in help message.
      *
-     * @return The description.
+     * @return the command's description.
      */
     @Override
     public String description() {

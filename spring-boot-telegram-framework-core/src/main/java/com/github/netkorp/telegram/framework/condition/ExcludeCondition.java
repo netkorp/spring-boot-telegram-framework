@@ -11,6 +11,10 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.Map;
 
+/**
+ * Searches for the name of every available commands in the excluded command list and the command that appears
+ * in the list will be excluded from the available command list.
+ */
 @Component
 public class ExcludeCondition implements Condition {
 

@@ -4,7 +4,7 @@
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/netkorp/spring-boot-telegram-framework/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/netkorp/spring-boot-telegram-framework/?branch=master)
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/netkorp/spring-boot-telegram-framework/blob/master/LICENSE)
 
-This is a framework for the creation of bots for Telegram using Spring Boot. With this tool you only have to worry about the logic of the commands that your bot will respond to and the framework will take care of the rest for you.
+This is a framework for the creation of bots for Telegram using Spring Boot. With this tool you only have to worry about the logic of the commands that your bot will respond to and the framework will take care of the rest for you. In addition, it provides you with some basic commands and a several kind of commands.
 
 ## Installation
 
