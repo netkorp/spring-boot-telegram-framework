@@ -8,7 +8,7 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.MethodMetadata;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,12 +29,12 @@ public class ExcludeCondition implements Condition {
      */
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        String excludeValue = context.getEnvironment().getProperty("telegram.commands.exclude");
+        List excludeValue = context.getEnvironment().getProperty("telegram.commands.exclude", List.class);
         if (excludeValue != null && context.getBeanFactory() != null) {
             Map<String, Object> attributes = metadata.getAnnotationAttributes(TelegramCommand.class.getName());
             if (attributes != null) {
                 String commandName = (String) attributes.get("name");
-                return !Arrays.asList(excludeValue.split(",")).contains(commandName);
+                return !excludeValue.contains(commandName);
             }
         }
 
