@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
  * It should be used in classes that implement the
  * {@link com.github.netkorp.telegram.framework.commands.interfaces.Command} interface.
  *
- * @see com.github.netkorp.telegram.framework.commands.abstracts.AbstractCommand
+ * @see com.github.netkorp.telegram.framework.commands.abstracts.AbstractSimpleCommand
  * @see com.github.netkorp.telegram.framework.commands.abstracts.AbstractMultistageCommand
  */
 @Target(ElementType.TYPE)

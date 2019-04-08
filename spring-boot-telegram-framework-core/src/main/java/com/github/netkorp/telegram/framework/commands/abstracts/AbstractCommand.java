@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Lazy;
 /**
  * Stores the basic components that the command needs.
  */
-public abstract class AbstractCommand implements Command {
+abstract class AbstractCommand implements Command {
 
     /**
      * The bot that the command can use to share information with Telegram.

@@ -4,6 +4,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 /**
  * Contains the logic of each step in the multistage command flow.
+ *
+ * @see SimpleCommand
  */
 public interface MultistageCommand extends Command {
 

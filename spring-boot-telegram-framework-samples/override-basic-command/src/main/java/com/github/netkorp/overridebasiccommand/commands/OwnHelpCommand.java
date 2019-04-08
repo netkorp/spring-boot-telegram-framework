@@ -1,7 +1,7 @@
 package com.github.netkorp.overridebasiccommand.commands;
 
 import com.github.netkorp.telegram.framework.annotations.TelegramCommand;
-import com.github.netkorp.telegram.framework.commands.abstracts.AbstractCommand;
+import com.github.netkorp.telegram.framework.commands.abstracts.AbstractSimpleCommand;
 import com.github.netkorp.telegram.framework.commands.interfaces.HelpCommand;
 import com.github.netkorp.telegram.framework.managers.CommandManager;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -9,7 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.util.StringJoiner;
 
 @TelegramCommand(name = "assistance", free = true)
-public class OwnHelpCommand extends AbstractCommand implements HelpCommand {
+public class OwnHelpCommand extends AbstractSimpleCommand implements HelpCommand {
 
     /**
      * Processes the data sent by the users.

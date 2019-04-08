@@ -1,7 +1,7 @@
 package com.github.netkorp.telegram.framework.commands.multistage;
 
 import com.github.netkorp.telegram.framework.annotations.TelegramCommand;
-import com.github.netkorp.telegram.framework.commands.abstracts.AbstractCommand;
+import com.github.netkorp.telegram.framework.commands.abstracts.AbstractSimpleCommand;
 import com.github.netkorp.telegram.framework.commands.interfaces.CloseCommand;
 import com.github.netkorp.telegram.framework.commands.interfaces.MultistageCommand;
 import com.github.netkorp.telegram.framework.exceptions.CommandNotActive;
@@ -18,7 +18,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @TelegramCommand(name = "close", group = "Multistage")
 @ConditionalOnBean(MultistageCommand.class)
 @ConditionalOnSingleCandidate(CloseCommand.class)
-public class MultistageCloseCommand extends AbstractCommand implements CloseCommand {
+public class MultistageCloseCommand extends AbstractSimpleCommand implements CloseCommand {
 
     /**
      * Processes the data sent by the users.

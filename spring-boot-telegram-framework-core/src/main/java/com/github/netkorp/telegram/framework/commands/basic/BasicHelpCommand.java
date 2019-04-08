@@ -1,7 +1,7 @@
 package com.github.netkorp.telegram.framework.commands.basic;
 
 import com.github.netkorp.telegram.framework.annotations.TelegramCommand;
-import com.github.netkorp.telegram.framework.commands.abstracts.AbstractCommand;
+import com.github.netkorp.telegram.framework.commands.abstracts.AbstractSimpleCommand;
 import com.github.netkorp.telegram.framework.commands.interfaces.Command;
 import com.github.netkorp.telegram.framework.commands.interfaces.HelpCommand;
 import com.github.netkorp.telegram.framework.condition.ExcludeCondition;
@@ -26,7 +26,7 @@ import java.util.TreeMap;
 @TelegramCommand(name = "help", group = "Basic")
 @Conditional(ExcludeCondition.class)
 @ConditionalOnSingleCandidate(HelpCommand.class)
-public class BasicHelpCommand extends AbstractCommand implements HelpCommand {
+public class BasicHelpCommand extends AbstractSimpleCommand implements HelpCommand {
 
     /**
      * The component to know which user is authorized.
