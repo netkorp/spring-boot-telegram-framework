@@ -13,25 +13,25 @@ import java.util.List;
 public class CommandProperties {
 
     /**
-     * List with the names of free commands.
+     * List with the names of non-secure commands.
      */
-    private List<String> free;
+    private List<String> nonSecure;
 
     /**
-     * Returns the list with the names of free commands.
+     * Returns the list with the names of non-secure commands.
      *
-     * @return the list with the names of free commands.
+     * @return the list with the names of non-secure commands.
      */
-    public List<String> getFree() {
-        return free;
+    public List<String> getNonSecure() {
+        return nonSecure;
     }
 
     /**
-     * Sets the names of free commands.
+     * Sets the names of non-secure commands.
      *
-     * @param free the names of free commands.
+     * @param nonSecure the names of non-secure commands.
      */
-    public void setFree(List<String> free) {
-        this.free = free;
+    public void setNonSecure(List<String> nonSecure) {
+        this.nonSecure = nonSecure;
     }
 }

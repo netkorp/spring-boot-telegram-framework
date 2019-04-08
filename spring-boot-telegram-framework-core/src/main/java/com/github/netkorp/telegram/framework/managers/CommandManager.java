@@ -20,7 +20,7 @@ import java.util.Optional;
 
 /**
  * Provides the component for managing all of the commands available in the bot.
- * It includes the management of free commands, active command, basic commands and
+ * It includes the management of non-secure commands, active command, basic commands and
  * those commands that are involved in the multistage command flow.
  */
 @Component
@@ -32,9 +32,9 @@ public class CommandManager {
     private final Map<String, Command> commands;
 
     /**
-     * The list of the free commands into a map to get a quick access from its name.
+     * The list of the non-secure commands into a map to get a quick access from its name.
      */
-    private final Map<String, Command> freeCommands;
+    private final Map<String, Command> nonSecureCommands;
 
     /**
      * The command that is active for each user.
@@ -69,32 +69,32 @@ public class CommandManager {
     @Autowired
     public CommandManager(List<Command> commands, CommandProperties commandProperties) {
         this.commands = new HashMap<>();
-        this.freeCommands = new HashMap<>();
+        this.nonSecureCommands = new HashMap<>();
 
         this.activeCommand = new HashMap<>();
 
         commands.stream()
                 .filter(item -> item.getClass().isAnnotationPresent(TelegramCommand.class))
-                .forEach(command -> addCommand(command, commandProperties.getFree()));
+                .forEach(command -> addCommand(command, commandProperties.getNonSecure()));
     }
 
     /**
-     * Adds the command to the list of available/free commands and
+     * Adds the command to the list of available/non-secure commands and
      * sets the name for {@link #closeCommand}, {@link #doneCommand} and {@link #helpCommand}.
      *
-     * @param command          the command to be added.
-     * @param freeCommandNames the free command list.
+     * @param command           the command to be added.
+     * @param nonSecureCommands the non-secure command list.
      * @see #commands
-     * @see #freeCommands
+     * @see #nonSecureCommands
      * @see #closeCommand
      * @see #doneCommand
      * @see #helpCommand
      */
-    private void addCommand(Command command, List<String> freeCommandNames) {
+    private void addCommand(Command command, List<String> nonSecureCommands) {
         this.commands.put(getCommand(command), command);
 
-        if (isFreeCommand(command, freeCommandNames)) {
-            this.freeCommands.put(getCommand(command), command);
+        if (isNonSecureCommand(command, nonSecureCommands)) {
+            this.nonSecureCommands.put(getCommand(command), command);
         }
 
         if (command instanceof MultistageCloseCommand) {
@@ -107,16 +107,16 @@ public class CommandManager {
     }
 
     /**
-     * Returns {@code true} if the command is free.
+     * Returns {@code true} if the command is non-secure.
      *
-     * @param command          the command to be processed.
-     * @param freeCommandNames the list of free commands.
-     * @return {@code true} if the command is free; {@code false} otherwise.
+     * @param command           the command to be processed.
+     * @param nonSecureCommands the list of non-secure commands.
+     * @return {@code true} if the command is non-secure; {@code false} otherwise.
      */
-    private boolean isFreeCommand(Command command, List<String> freeCommandNames) {
-        return freeCommandNames.contains(getCommandName(command))
-                || freeCommandNames.contains(getCommand(command))
-                || command.getClass().getAnnotation(TelegramCommand.class).free();
+    private boolean isNonSecureCommand(Command command, List<String> nonSecureCommands) {
+        return nonSecureCommands.contains(getCommandName(command))
+                || nonSecureCommands.contains(getCommand(command))
+                || !command.getClass().getAnnotation(TelegramCommand.class).secure();
     }
 
     /**
@@ -158,18 +158,18 @@ public class CommandManager {
     }
 
     /**
-     * Returns the free {@link Command} instance from the command name.
+     * Returns the non-secure {@link Command} instance from the command name.
      *
      * @param command the command name.
-     * @return the free {@link Command} instance.
-     * @throws CommandNotFound if the name is not related to any commands.
+     * @return the non-secure {@link Command} instance.
+     * @throws CommandNotFound if the name is not related to any non-secure commands.
      */
-    public Command getFreeCommand(String command) throws CommandNotFound {
-        if (!this.freeCommands.containsKey(command)) {
+    public Command getNonSecureCommand(String command) throws CommandNotFound {
+        if (!this.nonSecureCommands.containsKey(command)) {
             throw new CommandNotFound();
         }
 
-        return this.freeCommands.get(command);
+        return this.nonSecureCommands.get(command);
     }
 
     /**
@@ -265,11 +265,11 @@ public class CommandManager {
     }
 
     /**
-     * Returns a list with the available free commands.
+     * Returns a list with the available non-secure commands.
      *
-     * @return the available free commands.
+     * @return the available non-secure commands.
      */
-    public Collection<Command> getAvailableFreeCommands() {
-        return freeCommands.values();
+    public Collection<Command> getAvailableNonSecureCommands() {
+        return nonSecureCommands.values();
     }
 }

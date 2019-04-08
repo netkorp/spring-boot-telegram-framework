@@ -87,9 +87,9 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
                 if (update.getMessage().hasText()) {
                     String command = update.getMessage().getText().toLowerCase();
 
-                    // Checking if it's a free command
+                    // Checking if it's a non-secure command
                     try {
-                        commandManager.getFreeCommand(command).execute(update);
+                        commandManager.getNonSecureCommand(command).execute(update);
                         return;
                     } catch (CommandNotFound commandNotFound) {
                         // Do nothing

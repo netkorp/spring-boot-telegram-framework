@@ -106,7 +106,7 @@ public class BasicHelpCommand extends AbstractSimpleCommand implements HelpComma
             return commandManager.getAvailableCommands();
         }
 
-        return commandManager.getAvailableFreeCommands();
+        return commandManager.getAvailableNonSecureCommands();
     }
 
     /**

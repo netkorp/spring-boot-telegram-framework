@@ -9,7 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 /**
  * Shows the chat identification for user who invoked the command.
  */
-@TelegramCommand(name = "whoami", group = "Basic", free = true)
+@TelegramCommand(name = "whoami", group = "Basic", secure = false)
 @Conditional(ExcludeCondition.class)
 public final class WhoAmICommand extends AbstractSimpleCommand {
 

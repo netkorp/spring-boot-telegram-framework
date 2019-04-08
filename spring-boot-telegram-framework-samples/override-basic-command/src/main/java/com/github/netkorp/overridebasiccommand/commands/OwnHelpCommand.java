@@ -8,7 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.StringJoiner;
 
-@TelegramCommand(name = "assistance", free = true)
+@TelegramCommand(name = "assistance", secure = false)
 public class OwnHelpCommand extends AbstractSimpleCommand implements HelpCommand {
 
     /**
@@ -20,7 +20,7 @@ public class OwnHelpCommand extends AbstractSimpleCommand implements HelpCommand
     public void execute(Update update) {
         StringJoiner stringJoiner = new StringJoiner(System.lineSeparator());
         stringJoiner.add("Commands:");
-        commandManager.getAvailableFreeCommands()
+        commandManager.getAvailableNonSecureCommands()
                 .forEach(command -> stringJoiner.add(String.format("%s - <b>%s</b>", CommandManager.getCommand(command), command.description())));
         bot.sendMessage(stringJoiner.toString(), update.getMessage().getChatId(), true);
     }

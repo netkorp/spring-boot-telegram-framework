@@ -39,9 +39,9 @@ public @interface TelegramCommand {
     String group() default "";
 
     /**
-     * Returns {@code true} if the command is free.
+     * Returns {@code true} if the command is secure.
      *
-     * @return {@code true} if the command is free; {@code false} otherwise.
+     * @return {@code true} if the command is secure; {@code false} otherwise. By default the command is secure.
      */
-    boolean free() default false;
+    boolean secure() default true;
 }
