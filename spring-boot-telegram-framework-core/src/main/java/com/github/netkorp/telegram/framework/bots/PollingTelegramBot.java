@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -48,7 +49,7 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
     /**
      * The component for managing all of the commands available in the bot.
      */
-    private CommandManager commandManager;
+    private final CommandManager commandManager;
 
     /**
      * Constructs a new {@link PollingTelegramBot} instance with both username and token of the bot
@@ -61,20 +62,11 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
     @Autowired
     public PollingTelegramBot(@Value("${telegram.bots.username}") String botUsername,
                               @Value("${telegram.bots.token}") String botToken,
-                              SecurityManager securityManager) {
+                              SecurityManager securityManager,
+                              @Lazy CommandManager commandManager) {
         this.botUsername = botUsername;
         this.botToken = botToken;
         this.securityManager = securityManager;
-    }
-
-    /**
-     * Sets the {@link CommandManager} component.
-     *
-     * @param commandManager the {@link CommandManager} instance.
-     * @see #commandManager
-     */
-    @Autowired
-    public void setCommandManager(CommandManager commandManager) {
         this.commandManager = commandManager;
     }
 
