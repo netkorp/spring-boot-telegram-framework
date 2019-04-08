@@ -1,19 +1,17 @@
 package com.github.netkorp.telegram.framework.managers;
 
 import com.github.netkorp.telegram.framework.annotations.TelegramCommand;
-import com.github.netkorp.telegram.framework.bots.PollingTelegramBot;
 import com.github.netkorp.telegram.framework.commands.interfaces.CloseCommand;
 import com.github.netkorp.telegram.framework.commands.interfaces.Command;
 import com.github.netkorp.telegram.framework.commands.interfaces.DoneCommand;
 import com.github.netkorp.telegram.framework.commands.interfaces.HelpCommand;
 import com.github.netkorp.telegram.framework.commands.interfaces.MultistageCommand;
+import com.github.netkorp.telegram.framework.properties.CommandProperties;
 import com.github.netkorp.telegram.framework.exceptions.CommandNotActive;
 import com.github.netkorp.telegram.framework.exceptions.CommandNotFound;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -63,14 +61,13 @@ public class CommandManager {
 
     /**
      * Constructs a new {@link CommandManager} instance with the list of available {@link Command}
-     * and the list (as a string where each name is separated by commas)
-     * of the free commands.
+     * and the properties of the commands.
      *
-     * @param commands     the list of available {@link Command}.
-     * @param freeCommands the free command list.
+     * @param commands          the list of available {@link Command}.
+     * @param commandProperties the properties of the commands.
      */
     @Autowired
-    public CommandManager(List<Command> commands, @Value("${telegram.commands.free}") String freeCommands) {
+    public CommandManager(List<Command> commands, CommandProperties commandProperties) {
         this.commands = new HashMap<>();
         this.freeCommands = new HashMap<>();
 
@@ -78,7 +75,7 @@ public class CommandManager {
 
         commands.stream()
                 .filter(item -> item.getClass().isAnnotationPresent(TelegramCommand.class))
-                .forEach(command -> addCommand(command, Arrays.asList(freeCommands.split(","))));
+                .forEach(command -> addCommand(command, commandProperties.getFree()));
     }
 
     /**
