@@ -26,7 +26,6 @@ abstract class AbstractCommand implements Command {
      *
      * @param bot the Telegram bot.
      */
-    @Override
     @Autowired
     public void setBot(PollingTelegramBot bot) {
         this.bot = bot;
@@ -37,7 +36,6 @@ abstract class AbstractCommand implements Command {
      *
      * @param commandManager the {@link CommandManager} instance.
      */
-    @Override
     @Autowired
     public void setCommandManager(@Lazy CommandManager commandManager) {
         this.commandManager = commandManager;
