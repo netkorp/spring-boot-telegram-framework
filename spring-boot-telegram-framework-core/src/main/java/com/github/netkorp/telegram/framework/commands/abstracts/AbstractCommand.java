@@ -3,6 +3,8 @@ package com.github.netkorp.telegram.framework.commands.abstracts;
 import com.github.netkorp.telegram.framework.bots.PollingTelegramBot;
 import com.github.netkorp.telegram.framework.commands.interfaces.Command;
 import com.github.netkorp.telegram.framework.managers.CommandManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 
 /**
  * Stores the basic components that the command needs.
@@ -25,6 +27,7 @@ public abstract class AbstractCommand implements Command {
      * @param bot the Telegram bot.
      */
     @Override
+    @Autowired
     public void setBot(PollingTelegramBot bot) {
         this.bot = bot;
     }
@@ -35,7 +38,8 @@ public abstract class AbstractCommand implements Command {
      * @param commandManager the {@link CommandManager} instance.
      */
     @Override
-    public void setCommandManager(CommandManager commandManager) {
+    @Autowired
+    public void setCommandManager(@Lazy CommandManager commandManager) {
         this.commandManager = commandManager;
     }
 }

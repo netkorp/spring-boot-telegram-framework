@@ -52,12 +52,13 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
     private final CommandManager commandManager;
 
     /**
-     * Constructs a new {@link PollingTelegramBot} instance with both username and token of the bot
-     * and the {@link SecurityManager} component instance.
+     * Constructs a new {@link PollingTelegramBot} instance with both username and token of the bot,
+     * the {@link SecurityManager} component instance and the {@link CommandManager} instance.
      *
      * @param botUsername     the username of the bot.
      * @param botToken        the token of the bot.
      * @param securityManager the {@link SecurityManager} component instance.
+     * @param commandManager  the {@link CommandManager} instance.
      */
     @Autowired
     public PollingTelegramBot(@Value("${telegram.bots.username}") String botUsername,

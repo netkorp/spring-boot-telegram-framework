@@ -62,16 +62,15 @@ public class CommandManager {
     private String helpCommand;
 
     /**
-     * Constructs a new {@link CommandManager} instance with the list of available {@link Command},
-     * the {@link PollingTelegramBot} instance and the list (as a string where each name is separated by commas)
+     * Constructs a new {@link CommandManager} instance with the list of available {@link Command}
+     * and the list (as a string where each name is separated by commas)
      * of the free commands.
      *
      * @param commands     the list of available {@link Command}.
-     * @param bot          the bot instance.
      * @param freeCommands the free command list.
      */
     @Autowired
-    public CommandManager(List<Command> commands, PollingTelegramBot bot, @Value("${telegram.commands.free}") String freeCommands) {
+    public CommandManager(List<Command> commands, @Value("${telegram.commands.free}") String freeCommands) {
         this.commands = new HashMap<>();
         this.freeCommands = new HashMap<>();
 
@@ -79,7 +78,7 @@ public class CommandManager {
 
         commands.stream()
                 .filter(item -> item.getClass().isAnnotationPresent(TelegramCommand.class))
-                .forEach(command -> addCommand(command, bot, Arrays.asList(freeCommands.split(","))));
+                .forEach(command -> addCommand(command, Arrays.asList(freeCommands.split(","))));
     }
 
     /**
@@ -87,7 +86,6 @@ public class CommandManager {
      * sets the name for {@link #closeCommand}, {@link #doneCommand} and {@link #helpCommand}.
      *
      * @param command          the command to be added.
-     * @param bot              the bot instance.
      * @param freeCommandNames the free command list.
      * @see #commands
      * @see #freeCommands
@@ -95,9 +93,7 @@ public class CommandManager {
      * @see #doneCommand
      * @see #helpCommand
      */
-    private void addCommand(Command command, PollingTelegramBot bot, List<String> freeCommandNames) {
-        command.setBot(bot);
-        command.setCommandManager(this);
+    private void addCommand(Command command, List<String> freeCommandNames) {
         this.commands.put(getCommand(command), command);
 
         if (isFreeCommand(command, freeCommandNames)) {
