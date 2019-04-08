@@ -27,7 +27,7 @@ import java.util.Optional;
 public class CommandManager {
 
     /**
-     * The list of the secured commands into a map to get a quick access from its name.
+     * The list of the available commands into a map to get a quick access from its name.
      */
     private final Map<String, Command> commands;
 

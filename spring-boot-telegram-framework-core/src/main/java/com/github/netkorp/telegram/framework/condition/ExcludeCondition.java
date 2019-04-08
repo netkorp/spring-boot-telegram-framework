@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Searches for the name of every available commands in the excluded command list and the command that appears
+ * Searches for the name of every available command in the excluded command list and the command that appears
  * in the list will be excluded from the available command list.
  */
 @Component

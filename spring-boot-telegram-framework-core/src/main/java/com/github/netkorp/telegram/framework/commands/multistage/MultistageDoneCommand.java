@@ -42,6 +42,6 @@ public class MultistageDoneCommand extends AbstractSimpleCommand {
      */
     @Override
     public String description() {
-        return "Marks as finished the current task. There should be an active commands before.";
+        return "Marks as finished the current task. There should be an active command before.";
     }
 }

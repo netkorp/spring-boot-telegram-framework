@@ -47,7 +47,7 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
     private final SecurityManager securityManager;
 
     /**
-     * The component for managing all of the commands available in the bot.
+     * The component for managing all of the available commands in the bot.
      */
     private final CommandManager commandManager;
 
@@ -83,7 +83,7 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
             Long idChat = update.getMessage().getChatId();
 
             try {
-                // Checking if this is a commands
+                // Checking if this is a command
                 if (update.getMessage().hasText()) {
                     String command = update.getMessage().getText().toLowerCase();
 
@@ -135,7 +135,7 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
     private void processMessage(Update update) throws CommandNotFound {
         final Long idChat = update.getMessage().getChatId();
 
-        // Perhaps is a commands
+        // Perhaps is a command
         if (update.getMessage().hasText()) {
             String commandText = update.getMessage().getText().toLowerCase();
 
@@ -143,11 +143,11 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
                 return;
             }
 
-            // Trying to get commands
+            // Trying to get a command
             try {
                 Command command = commandManager.getCommand(commandText);
 
-                // If there is no active commands defined, we understand this is an attempt to define/execute one
+                // If there is no active command defined, we understand this is an attempt to define/execute one
                 if (!commandManager.hasActiveCommand(idChat)) {
 
                     if (command instanceof MultistageCommand) {
@@ -161,14 +161,14 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
                     return;
                 }
             } catch (CommandNotFound commandNotFound) {
-                // Perhaps we're talking about data here. If there is an active commands, we leave it to it.
+                // Perhaps we're talking about data here. If there is an active command, we leave it to it.
                 if (!commandManager.hasActiveCommand(idChat)) {
                     throw commandNotFound;
                 }
             }
         }
 
-        // If there is a commands active, we handle the messages as data
+        // If there is a an active command, we handle the messages as data
         try {
             commandManager.getActiveCommand(idChat).execute(update);
         } catch (CommandNotActive commandNotActive) {

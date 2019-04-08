@@ -42,6 +42,6 @@ public class MultistageCloseCommand extends AbstractSimpleCommand {
      */
     @Override
     public String description() {
-        return "Closes the current task. There should be an active commands before.";
+        return "Closes the current task. There should be an active command before.";
     }
 }
