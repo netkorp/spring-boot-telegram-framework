@@ -1,11 +1,11 @@
 package com.github.netkorp.telegram.framework.managers;
 
 import com.github.netkorp.telegram.framework.annotations.TelegramCommand;
-import com.github.netkorp.telegram.framework.commands.interfaces.CloseCommand;
 import com.github.netkorp.telegram.framework.commands.interfaces.Command;
-import com.github.netkorp.telegram.framework.commands.interfaces.DoneCommand;
 import com.github.netkorp.telegram.framework.commands.interfaces.HelpCommand;
 import com.github.netkorp.telegram.framework.commands.interfaces.MultistageCommand;
+import com.github.netkorp.telegram.framework.commands.multistage.MultistageCloseCommand;
+import com.github.netkorp.telegram.framework.commands.multistage.MultistageDoneCommand;
 import com.github.netkorp.telegram.framework.properties.CommandProperties;
 import com.github.netkorp.telegram.framework.exceptions.CommandNotActive;
 import com.github.netkorp.telegram.framework.exceptions.CommandNotFound;
@@ -97,9 +97,9 @@ public class CommandManager {
             this.freeCommands.put(getCommand(command), command);
         }
 
-        if (command instanceof CloseCommand) {
+        if (command instanceof MultistageCloseCommand) {
             closeCommand = getCommand(command);
-        } else if (command instanceof DoneCommand) {
+        } else if (command instanceof MultistageDoneCommand) {
             doneCommand = getCommand(command);
         } else if (command instanceof HelpCommand) {
             helpCommand = getCommand(command);
@@ -217,9 +217,9 @@ public class CommandManager {
     }
 
     /**
-     * Returns the {@link CloseCommand} if it exists.
+     * Returns the {@link MultistageCloseCommand} if it exists.
      *
-     * @return the {@link CloseCommand} instance.
+     * @return the {@link MultistageCloseCommand} instance.
      */
     public Optional<Command> getCloseCommand() {
         try {
@@ -230,9 +230,9 @@ public class CommandManager {
     }
 
     /**
-     * Returns the {@link DoneCommand} if it exists.
+     * Returns the {@link MultistageDoneCommand} if it exists.
      *
-     * @return the {@link DoneCommand} instance.
+     * @return the {@link MultistageDoneCommand} instance.
      */
     public Optional<Command> getDoneCommand() {
         try {

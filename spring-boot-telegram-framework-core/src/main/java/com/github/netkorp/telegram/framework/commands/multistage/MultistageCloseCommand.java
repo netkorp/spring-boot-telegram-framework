@@ -2,23 +2,19 @@ package com.github.netkorp.telegram.framework.commands.multistage;
 
 import com.github.netkorp.telegram.framework.annotations.TelegramCommand;
 import com.github.netkorp.telegram.framework.commands.abstracts.AbstractSimpleCommand;
-import com.github.netkorp.telegram.framework.commands.interfaces.CloseCommand;
 import com.github.netkorp.telegram.framework.commands.interfaces.MultistageCommand;
 import com.github.netkorp.telegram.framework.exceptions.CommandNotActive;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 /**
  * Closes the active command. It invokes the {@link MultistageCommand#close(Update)} of the active command.
  *
- * @see MultistageCommand
- * @see CloseCommand
+ * @see MultistageDoneCommand
  */
 @TelegramCommand(name = "close", group = "Multistage")
 @ConditionalOnBean(MultistageCommand.class)
-@ConditionalOnSingleCandidate(CloseCommand.class)
-public class MultistageCloseCommand extends AbstractSimpleCommand implements CloseCommand {
+public class MultistageCloseCommand extends AbstractSimpleCommand {
 
     /**
      * Processes the data sent by the users.
