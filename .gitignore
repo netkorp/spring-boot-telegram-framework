@@ -3,6 +3,7 @@
 .mvn/
 mvnw
 mvnw.cmd
+/**/pom.xml.versionsBackup
 
 ### STS ###
 .apt_generated
