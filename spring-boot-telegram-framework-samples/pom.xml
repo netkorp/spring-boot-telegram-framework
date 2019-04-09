@@ -2,50 +2,52 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>spring-boot-telegram-framework-samples</artifactId>
+  <artifactId>spring-boot-telegram-framework-samples</artifactId>
+  <version>1.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>spring-boot-telegram-framework-samples</name>
+  <description>Submodule for Spring Boot Telegram Framework that contains all of the samples provided by this tool.
+  </description>
+  <url>https://github.com/netkorp/spring-boot-telegram-framework/tree/master/spring-boot-telegram-framework-samples
+  </url>
+
+  <parent>
+    <groupId>com.github.netkorp</groupId>
+    <artifactId>spring-boot-telegram-framework</artifactId>
     <version>1.0.1-SNAPSHOT</version>
-    <packaging>pom</packaging>
+  </parent>
 
-    <name>spring-boot-telegram-framework-samples</name>
-    <description>Submodule for Spring Boot Telegram Framework that contains all of the samples provided by this tool.</description>
-    <url>https://github.com/netkorp/spring-boot-telegram-framework/tree/master/spring-boot-telegram-framework-samples</url>
+  <modules>
+    <module>simple-command</module>
+    <module>multistage-command</module>
+    <module>override-basic-command</module>
+  </modules>
 
-    <parent>
-        <groupId>com.github.netkorp</groupId>
-        <artifactId>spring-boot-telegram-framework</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
-    </parent>
-
-    <modules>
-        <module>simple-command</module>
-        <module>multistage-command</module>
-        <module>override-basic-command</module>
-    </modules>
-
-    <build>
-        <finalName>${project.artifactId}</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <fork>true</fork>
-                    <executable>true</executable>
-                    <embeddedLaunchScriptProperties>
-                        <logFolder>/dev/</logFolder>
-                        <logFilename>null</logFilename>
-                    </embeddedLaunchScriptProperties>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <showDeprecation>true</showDeprecation>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+  <build>
+    <finalName>${project.artifactId}</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <fork>true</fork>
+          <executable>true</executable>
+          <embeddedLaunchScriptProperties>
+            <logFolder>/dev/</logFolder>
+            <logFilename>null</logFilename>
+          </embeddedLaunchScriptProperties>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <showDeprecation>true</showDeprecation>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
