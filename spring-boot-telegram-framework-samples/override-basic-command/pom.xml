@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>override-basic-command</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>override-basic-command</name>
@@ -14,14 +14,14 @@
     <parent>
         <groupId>com.github.netkorp</groupId>
         <artifactId>spring-boot-telegram-framework-samples</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
 
     <dependencies>
         <dependency>
             <groupId>com.github.netkorp</groupId>
             <artifactId>spring-boot-telegram-framework-core</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 </project>

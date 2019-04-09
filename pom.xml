@@ -13,7 +13,7 @@
 
     <groupId>com.github.netkorp</groupId>
     <artifactId>spring-boot-telegram-framework</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
 
     <name>spring-boot-telegram-framework</name>
