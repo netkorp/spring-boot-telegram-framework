@@ -85,7 +85,7 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
             try {
                 // Checking if this is a command
                 if (update.getMessage().hasText()) {
-                    String command = update.getMessage().getText().toLowerCase();
+                    String command = getCommand(update);
 
                     // Checking if it's a non-secure command
                     try {
@@ -105,6 +105,17 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
                 commandManager.getHelpCommand().ifPresent(command -> command.execute(update));
             }
         }
+    }
+
+    /**
+     * Returns the command invoked by the user from the message sent by him, cleaning the text and deleting the bot's username.
+     *
+     * @param update the received update.
+     * @return the command.
+     */
+    private String getCommand(Update update) {
+        return update.getMessage().getText().toLowerCase()
+                .replace(String.format("@%s", getBotUsername().toLowerCase()), "");
     }
 
     /**
@@ -137,7 +148,7 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
 
         // Perhaps is a command
         if (update.getMessage().hasText()) {
-            String commandText = update.getMessage().getText().toLowerCase();
+            String commandText = getCommand(update);
 
             if (reservedCommands(commandText, update)) {
                 return;
