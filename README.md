@@ -8,27 +8,25 @@ This is a framework for the creation of bots for Telegram using Spring Boot. Wit
 
 ## Installation
 
-Since the framework is not available in the Maven Central Repository you can install it in your local repository. To do this, execute the following commands:
-
-```bash
-git clone git@github.com:netkorp/spring-boot-telegram-framework.git
-cd spring-boot-telegram-framework
-mvn install
-```
-
-Add the following dependency to your pom.xml:
+The framework is available in the Maven Central Repository. You just need to add the following dependency to your pom.xml:
 
 ```xml
 <dependency>
     <groupId>com.github.netkorp</groupId>
     <artifactId>spring-boot-telegram-framework-core</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
+```
+
+For gradle users just add this to your dependencies:
+
+```gradle
+compile 'com.github.netkorp:spring-boot-telegram-framework-core:1.0.1'
 ```
 
 ## Usage
 
-Take a look at the [Wiki](https://github.com/netkorp/spring-boot-telegram-framework/wiki) for further information.
+For getting started with the framework, please check [this](https://github.com/netkorp/spring-boot-telegram-framework/wiki/Getting-started) out or take a look at the [Wiki](https://github.com/netkorp/spring-boot-telegram-framework/wiki) for further information. Contributions are welcome there as well.
 
 ## Contributing
 
