@@ -32,7 +32,7 @@ public class MultistageCloseCommand extends AbstractSimpleCommand {
             }
         } catch (CommandNotActive commandNotActive) {
             bot.sendMessage(commandNotActive.getMessage(), idChat);
-            commandManager.getHelpCommand().ifPresent(command -> command.execute(update, new String[]{}));
+            commandManager.getHelpCommand().ifPresent(command -> command.execute(update));
         }
     }
 

@@ -10,10 +10,19 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 public interface SimpleCommand extends Command {
 
     /**
-     * Processes the data sent by the users.
+     * Executes the command's logic taking parameters.
      *
      * @param update the received message.
      * @param args   the parameters passed to the command execution.
      */
     void execute(final Update update, String[] args);
+
+    /**
+     * Executes the command's logic without taking parameters.
+     *
+     * @param update the received message.
+     */
+    default void execute(final Update update) {
+        this.execute(update, new String[]{});
+    }
 }
