@@ -17,9 +17,10 @@ public final class WhoAmICommand extends AbstractSimpleCommand {
      * Processes the data sent by the users.
      *
      * @param update the received message.
+     * @param args   the parameters passed to the command execution.
      */
     @Override
-    public void execute(Update update) {
+    public void execute(Update update, String[] args) {
         Long idChat = update.getMessage().getChatId();
         bot.sendMessage(idChat.toString(), idChat);
     }

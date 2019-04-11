@@ -221,9 +221,9 @@ public class CommandManager {
      *
      * @return the {@link MultistageCloseCommand} instance.
      */
-    public Optional<Command> getCloseCommand() {
+    public Optional<MultistageCloseCommand> getCloseCommand() {
         try {
-            return Optional.ofNullable(getCommand(this.closeCommand));
+            return Optional.ofNullable(((MultistageCloseCommand) getCommand(this.closeCommand)));
         } catch (CommandNotFound commandNotFound) {
             return Optional.empty();
         }
@@ -234,9 +234,9 @@ public class CommandManager {
      *
      * @return the {@link MultistageDoneCommand} instance.
      */
-    public Optional<Command> getDoneCommand() {
+    public Optional<MultistageDoneCommand> getDoneCommand() {
         try {
-            return Optional.ofNullable(getCommand(this.doneCommand));
+            return Optional.ofNullable(((MultistageDoneCommand) getCommand(this.doneCommand)));
         } catch (CommandNotFound commandNotFound) {
             return Optional.empty();
         }
@@ -247,9 +247,9 @@ public class CommandManager {
      *
      * @return the {@link HelpCommand} instance.
      */
-    public Optional<Command> getHelpCommand() {
+    public Optional<HelpCommand> getHelpCommand() {
         try {
-            return Optional.ofNullable(getCommand(this.helpCommand));
+            return Optional.ofNullable(((HelpCommand) getCommand(this.helpCommand)));
         } catch (CommandNotFound commandNotFound) {
             return Optional.empty();
         }

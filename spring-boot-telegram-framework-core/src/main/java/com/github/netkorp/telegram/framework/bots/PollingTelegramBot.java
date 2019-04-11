@@ -2,6 +2,9 @@ package com.github.netkorp.telegram.framework.bots;
 
 import com.github.netkorp.telegram.framework.commands.interfaces.Command;
 import com.github.netkorp.telegram.framework.commands.interfaces.MultistageCommand;
+import com.github.netkorp.telegram.framework.commands.interfaces.SimpleCommand;
+import com.github.netkorp.telegram.framework.commands.multistage.MultistageCloseCommand;
+import com.github.netkorp.telegram.framework.commands.multistage.MultistageDoneCommand;
 import com.github.netkorp.telegram.framework.exceptions.CommandNotActive;
 import com.github.netkorp.telegram.framework.exceptions.CommandNotFound;
 import com.github.netkorp.telegram.framework.managers.CommandManager;
@@ -19,6 +22,9 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.lang.invoke.MethodHandles;
+import java.util.AbstractMap;
+import java.util.Arrays;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -85,11 +91,14 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
             try {
                 // Checking if this is a command
                 if (update.getMessage().hasText()) {
-                    String command = getCommand(update);
+                    Map.Entry<String, String[]> command = getCommand(update);
 
                     // Checking if it's a non-secure command
                     try {
-                        commandManager.getNonSecureCommand(command).execute(update);
+                        Command commandInstance = commandManager.getNonSecureCommand(command.getKey());
+                        if (commandInstance instanceof SimpleCommand) {
+                            ((SimpleCommand) commandInstance).execute(update, command.getValue());
+                        }
                         return;
                     } catch (CommandNotFound commandNotFound) {
                         // Do nothing
@@ -102,7 +111,7 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
                 }
             } catch (CommandNotFound commandNotFound) {
                 sendMessage(commandNotFound.getMessage(), idChat);
-                commandManager.getHelpCommand().ifPresent(command -> command.execute(update));
+                commandManager.getHelpCommand().ifPresent(command -> command.execute(update, new String[]{}));
             }
         }
     }
@@ -111,11 +120,16 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
      * Returns the command invoked by the user from the message sent by him, cleaning the text and deleting the bot's username.
      *
      * @param update the received update.
-     * @return the command.
+     * @return the command and the parameters.
      */
-    private String getCommand(Update update) {
-        return update.getMessage().getText().toLowerCase()
+    private Map.Entry<String, String[]> getCommand(Update update) {
+        String cleanedCommand = update.getMessage().getText().toLowerCase()
                 .replace(String.format("@%s", getBotUsername().toLowerCase()), "");
+
+        String[] dividedText = cleanedCommand.split(" ");
+
+        return new AbstractMap.SimpleEntry<>(dividedText[0],
+                Arrays.copyOfRange(dividedText, 1, dividedText.length));
     }
 
     /**
@@ -148,15 +162,15 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
 
         // Perhaps is a command
         if (update.getMessage().hasText()) {
-            String commandText = getCommand(update);
+            Map.Entry<String, String[]> commandText = getCommand(update);
 
-            if (reservedCommands(commandText, update)) {
+            if (reservedCommands(commandText.getKey(), commandText.getValue(), update)) {
                 return;
             }
 
             // Trying to get a command
             try {
-                Command command = commandManager.getCommand(commandText);
+                Command command = commandManager.getCommand(commandText.getKey());
 
                 // If there is no active command defined, we understand this is an attempt to define/execute one
                 if (!commandManager.hasActiveCommand(idChat)) {
@@ -165,8 +179,8 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
                         if (((MultistageCommand) command).init(update)) {
                             commandManager.setActiveCommand(idChat, ((MultistageCommand) command));
                         }
-                    } else {
-                        command.execute(update);
+                    } else if (command instanceof SimpleCommand) {
+                        ((SimpleCommand) command).execute(update, commandText.getValue());
                     }
 
                     return;
@@ -179,7 +193,7 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
             }
         }
 
-        // If there is a an active command, we handle the messages as data
+        // If there is an active command, we handle the messages as data
         try {
             commandManager.getActiveCommand(idChat).execute(update);
         } catch (CommandNotActive commandNotActive) {
@@ -192,23 +206,24 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
      * If this is the case it will execute the corresponding command.
      *
      * @param commandText the text entered by the user.
+     * @param args        the parameters passed to the command.
      * @param update      the message sent by the user.
      * @return {@code true} if some reserved command was executed; {@code false} otherwise.
      */
-    private boolean reservedCommands(String commandText, Update update) {
-        Optional<Command> closeCommand = commandManager.getCloseCommand()
+    private boolean reservedCommands(String commandText, String[] args, Update update) {
+        Optional<MultistageCloseCommand> closeCommand = commandManager.getCloseCommand()
                 .filter(command -> CommandManager.getCommand(command).equals(commandText));
 
         if (closeCommand.isPresent()) {
-            closeCommand.get().execute(update);
+            closeCommand.get().execute(update, args);
             return true;
         }
 
-        Optional<Command> doneCommand = commandManager.getDoneCommand()
+        Optional<MultistageDoneCommand> doneCommand = commandManager.getDoneCommand()
                 .filter(command -> CommandManager.getCommand(command).equals(commandText));
 
         if (doneCommand.isPresent()) {
-            doneCommand.get().execute(update);
+            doneCommand.get().execute(update, args);
             return true;
         }
 

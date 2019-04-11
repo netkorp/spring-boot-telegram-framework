@@ -20,6 +20,13 @@ public interface MultistageCommand extends Command {
     boolean init(final Update update);
 
     /**
+     * Processes the data sent by the users.
+     *
+     * @param update the received message.
+     */
+    void execute(final Update update);
+
+    /**
      * Indicates a command is done. It's invoked where the command
      * {@link com.github.netkorp.telegram.framework.commands.multistage.MultistageDoneCommand} is invoked.
      * It returns {@code true} if everything was fine during the process. In this case the command will be removed as active command.

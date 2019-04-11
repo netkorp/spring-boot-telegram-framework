@@ -47,9 +47,10 @@ public class BasicHelpCommand extends AbstractSimpleCommand implements HelpComma
      * Processes the data sent by the users.
      *
      * @param update the received message.
+     * @param args   the parameters passed to the command execution.
      */
     @Override
-    public void execute(Update update) {
+    public void execute(final Update update, String[] args) {
         StringJoiner stringJoiner = new StringJoiner(System.lineSeparator());
         stringJoiner.add("You can control me by sending these commands:");
         commandsByGroup(getAvailableCommands(update.getMessage().getChatId()))

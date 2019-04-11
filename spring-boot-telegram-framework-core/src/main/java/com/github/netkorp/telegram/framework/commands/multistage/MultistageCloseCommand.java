@@ -20,9 +20,10 @@ public class MultistageCloseCommand extends AbstractSimpleCommand {
      * Processes the data sent by the users.
      *
      * @param update the received message.
+     * @param args   the parameters passed to the command execution.
      */
     @Override
-    public void execute(Update update) {
+    public void execute(Update update, String[] args) {
         final Long idChat = update.getMessage().getChatId();
 
         try {
@@ -31,7 +32,7 @@ public class MultistageCloseCommand extends AbstractSimpleCommand {
             }
         } catch (CommandNotActive commandNotActive) {
             bot.sendMessage(commandNotActive.getMessage(), idChat);
-            commandManager.getHelpCommand().ifPresent(command -> command.execute(update));
+            commandManager.getHelpCommand().ifPresent(command -> command.execute(update, new String[]{}));
         }
     }
 
