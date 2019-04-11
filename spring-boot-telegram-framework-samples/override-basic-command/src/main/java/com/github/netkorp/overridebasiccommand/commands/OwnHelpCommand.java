@@ -15,9 +15,10 @@ public class OwnHelpCommand extends AbstractSimpleCommand implements HelpCommand
      * Processes the data sent by the users.
      *
      * @param update the received message.
+     * @param args   the parameters passed to the command execution.
      */
     @Override
-    public void execute(Update update) {
+    public void execute(Update update, String[] args) {
         StringJoiner stringJoiner = new StringJoiner(System.lineSeparator());
         stringJoiner.add("Commands:");
         commandManager.getAvailableNonSecureCommands()
