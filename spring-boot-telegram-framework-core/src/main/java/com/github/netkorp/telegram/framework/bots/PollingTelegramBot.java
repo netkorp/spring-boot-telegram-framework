@@ -211,7 +211,7 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
      */
     private boolean reservedCommands(String commandText, Update update) {
         Optional<MultistageCloseCommand> closeCommand = commandManager.getCloseCommand()
-                .filter(command -> CommandManager.getCommand(command).equals(commandText));
+                .filter(command -> CommandManager.getCommandFullName(command).equals(commandText));
 
         if (closeCommand.isPresent()) {
             closeCommand.get().execute(update);
@@ -219,7 +219,7 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
         }
 
         Optional<MultistageDoneCommand> doneCommand = commandManager.getDoneCommand()
-                .filter(command -> CommandManager.getCommand(command).equals(commandText));
+                .filter(command -> CommandManager.getCommandFullName(command).equals(commandText));
 
         if (doneCommand.isPresent()) {
             doneCommand.get().execute(update);

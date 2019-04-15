@@ -91,18 +91,18 @@ public class CommandManager {
      * @see #helpCommand
      */
     private void addCommand(Command command, List<String> nonSecureCommands) {
-        this.commands.put(getCommand(command), command);
+        this.commands.put(getCommandFullName(command), command);
 
         if (isNonSecureCommand(command, nonSecureCommands)) {
-            this.nonSecureCommands.put(getCommand(command), command);
+            this.nonSecureCommands.put(getCommandFullName(command), command);
         }
 
         if (command instanceof MultistageCloseCommand) {
-            closeCommand = getCommand(command);
+            closeCommand = getCommandFullName(command);
         } else if (command instanceof MultistageDoneCommand) {
-            doneCommand = getCommand(command);
+            doneCommand = getCommandFullName(command);
         } else if (command instanceof HelpCommand) {
-            helpCommand = getCommand(command);
+            helpCommand = getCommandFullName(command);
         }
     }
 
@@ -115,7 +115,7 @@ public class CommandManager {
      */
     private boolean isNonSecureCommand(Command command, List<String> nonSecureCommands) {
         return nonSecureCommands.contains(getCommandName(command))
-                || nonSecureCommands.contains(getCommand(command))
+                || nonSecureCommands.contains(getCommandFullName(command))
                 || !command.getClass().getAnnotation(TelegramCommand.class).secure();
     }
 
@@ -134,12 +134,21 @@ public class CommandManager {
     /**
      * Returns the name of the command. It includes the slash (/).
      *
+     * @param commandName the command's name (the same name declared on {@link TelegramCommand#name()})
+     * @return the name of the command.
+     */
+    public static String getCommandFullName(String commandName) {
+        return commandName.startsWith("/") ? commandName : String.format("/%s", commandName);
+    }
+
+    /**
+     * Returns the name of the command. It includes the slash (/).
+     *
      * @param command the command from which the name will be identified.
      * @return the name of the command.
      */
-    public static String getCommand(Command command) {
-        String commandName = getCommandName(command);
-        return commandName.startsWith("/") ? commandName : String.format("/%s", commandName);
+    public static String getCommandFullName(Command command) {
+        return getCommandFullName(getCommandName(command));
     }
 
     /**

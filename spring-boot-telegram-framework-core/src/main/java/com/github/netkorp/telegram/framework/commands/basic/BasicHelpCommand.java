@@ -5,6 +5,7 @@ import com.github.netkorp.telegram.framework.commands.abstracts.AbstractSimpleCo
 import com.github.netkorp.telegram.framework.commands.interfaces.Command;
 import com.github.netkorp.telegram.framework.commands.interfaces.HelpCommand;
 import com.github.netkorp.telegram.framework.condition.ExcludeCondition;
+import com.github.netkorp.telegram.framework.exceptions.CommandNotFound;
 import com.github.netkorp.telegram.framework.managers.CommandManager;
 import com.github.netkorp.telegram.framework.managers.SecurityManager;
 import org.apache.logging.log4j.util.Strings;
@@ -51,6 +52,37 @@ public class BasicHelpCommand extends AbstractSimpleCommand implements HelpComma
      */
     @Override
     public void execute(final Update update, String[] args) {
+        try {
+            if (args.length == 0) {
+                execute(update);
+                return;
+            }
+
+            StringJoiner stringJoiner = new StringJoiner(System.lineSeparator());
+
+            for (String arg : args) {
+                try {
+                    stringJoiner.add(helpForCommand(commandManager.getCommand(CommandManager.getCommandFullName(arg))));
+                } catch (CommandNotFound commandNotFound) {
+                    bot.sendMessage(String.format("%s: %s", commandNotFound.getMessage(), arg), update.getMessage().getChatId(), true);
+                    execute(update);
+                    throw commandNotFound;
+                }
+            }
+
+            bot.sendMessage(stringJoiner.toString(), update.getMessage().getChatId(), true);
+        } catch (CommandNotFound commandNotFound) {
+            // Do nothing
+        }
+    }
+
+    /**
+     * Executes the command's logic without taking parameters.
+     *
+     * @param update the received message.
+     */
+    @Override
+    public void execute(Update update) {
         StringJoiner stringJoiner = new StringJoiner(System.lineSeparator());
         stringJoiner.add("You can control me by sending these commands:");
         commandsByGroup(getAvailableCommands(update.getMessage().getChatId()))
@@ -70,8 +102,18 @@ public class BasicHelpCommand extends AbstractSimpleCommand implements HelpComma
         if (!Strings.isEmpty(group)) {
             stringJoiner.add(String.format("<b>%s</b>", group));
         }
-        commands.forEach(command -> stringJoiner.add(String.format("%s - %s", CommandManager.getCommand(command), command.description())));
+        commands.forEach(command -> stringJoiner.add(helpForCommand(command)));
         return System.lineSeparator() + stringJoiner.toString();
+    }
+
+    /**
+     * Returns the help for a single command.
+     *
+     * @param command the command.
+     * @return the help of the command.
+     */
+    private String helpForCommand(Command command) {
+        return String.format("%s - %s", CommandManager.getCommandFullName(command), command.description());
     }
 
     /**
