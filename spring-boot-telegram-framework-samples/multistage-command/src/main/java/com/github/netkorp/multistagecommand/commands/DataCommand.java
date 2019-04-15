@@ -70,7 +70,7 @@ public class DataCommand extends AbstractMultistageCommand {
                 bot.sendMessage(Strings.isEmpty(lastName) ? "Sorry, I can't find your last name" : lastName, update.getMessage().getChatId());
                 break;
             default:
-                bot.sendMessage("I don't recognize that order", update.getMessage().getChatId());
+                bot.sendMessage("I don't recognize that command", update.getMessage().getChatId());
                 break;
         }
     }

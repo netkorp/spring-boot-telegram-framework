@@ -23,6 +23,7 @@ import java.util.Optional;
  * It includes the management of non-secure commands, active command, basic commands and
  * those commands that are involved in the multistage command flow.
  */
+@SuppressWarnings("WeakerAccess")
 @Component
 public class CommandManager {
 
@@ -42,22 +43,27 @@ public class CommandManager {
     private final Map<Long, MultistageCommand> activeCommand;
 
     /**
-     * The name used for invoking the command that closes an active conversation with the bot indicating to the active command that the conversation is closed.
+     * The properties of the commands.
+     */
+    private final CommandProperties commandProperties;
+
+    /**
+     * The command that closes an active conversation with the bot, indicating to the active command that the conversation is closed.
      * It is kept here for a quick access to the close command.
      */
-    private String closeCommand;
+    private MultistageCloseCommand closeCommand;
 
     /**
-     * The name used for invoking the command that closes an active conversation with the bot indicating to the active command that the conversation is done.
+     * The command that closes an active conversation with the bot, indicating to the active command that the conversation is done.
      * It is kept here for a quick access to the done command.
      */
-    private String doneCommand;
+    private MultistageDoneCommand doneCommand;
 
     /**
-     * The name used for invoking the command that shows the help of the bot.
+     * The command that shows the help of the bot.
      * It is kept here for a quick access to the help command.
      */
-    private String helpCommand;
+    private HelpCommand helpCommand;
 
     /**
      * Constructs a new {@link CommandManager} instance with the list of available {@link Command}
@@ -72,51 +78,51 @@ public class CommandManager {
         this.nonSecureCommands = new HashMap<>();
 
         this.activeCommand = new HashMap<>();
+        this.commandProperties = commandProperties;
 
         commands.stream()
                 .filter(item -> item.getClass().isAnnotationPresent(TelegramCommand.class))
-                .forEach(command -> addCommand(command, commandProperties.getNonSecure()));
+                .forEach(this::addCommand);
     }
 
     /**
-     * Adds the command to the list of available/non-secure commands and
-     * sets the name for {@link #closeCommand}, {@link #doneCommand} and {@link #helpCommand}.
+     * Adds the command to the list of available/non-secure commands and sets the commands for
+     * {@link #closeCommand}, {@link #doneCommand} and {@link #helpCommand}.
      *
-     * @param command           the command to be added.
-     * @param nonSecureCommands the non-secure command list.
+     * @param command the command to be added.
      * @see #commands
      * @see #nonSecureCommands
      * @see #closeCommand
      * @see #doneCommand
      * @see #helpCommand
      */
-    private void addCommand(Command command, List<String> nonSecureCommands) {
+    private void addCommand(Command command) {
         this.commands.put(getCommandFullName(command), command);
 
-        if (isNonSecureCommand(command, nonSecureCommands)) {
+        // Just for keeping a reference of the non-secure commands
+        if (commandProperties.getNonSecure().contains(getCommandName(command))
+                || commandProperties.getNonSecure().contains(getCommandFullName(command))
+                || !command.getClass().getAnnotation(TelegramCommand.class).secure()) {
             this.nonSecureCommands.put(getCommandFullName(command), command);
         }
 
         if (command instanceof MultistageCloseCommand) {
-            closeCommand = getCommandFullName(command);
+            closeCommand = ((MultistageCloseCommand) command);
         } else if (command instanceof MultistageDoneCommand) {
-            doneCommand = getCommandFullName(command);
+            doneCommand = ((MultistageDoneCommand) command);
         } else if (command instanceof HelpCommand) {
-            helpCommand = getCommandFullName(command);
+            helpCommand = ((HelpCommand) command);
         }
     }
 
     /**
      * Returns {@code true} if the command is non-secure.
      *
-     * @param command           the command to be processed.
-     * @param nonSecureCommands the list of non-secure commands.
+     * @param command the command to be processed.
      * @return {@code true} if the command is non-secure; {@code false} otherwise.
      */
-    private boolean isNonSecureCommand(Command command, List<String> nonSecureCommands) {
-        return nonSecureCommands.contains(getCommandName(command))
-                || nonSecureCommands.contains(getCommandFullName(command))
-                || !command.getClass().getAnnotation(TelegramCommand.class).secure();
+    public boolean isNonSecureCommand(Command command) {
+        return this.nonSecureCommands.containsKey(getCommandFullName(command));
     }
 
     /**
@@ -164,21 +170,6 @@ public class CommandManager {
         }
 
         return this.commands.get(command);
-    }
-
-    /**
-     * Returns the non-secure {@link Command} instance from the command name.
-     *
-     * @param command the command name.
-     * @return the non-secure {@link Command} instance.
-     * @throws CommandNotFound if the name is not related to any non-secure commands.
-     */
-    public Command getNonSecureCommand(String command) throws CommandNotFound {
-        if (!this.nonSecureCommands.containsKey(command)) {
-            throw new CommandNotFound();
-        }
-
-        return this.nonSecureCommands.get(command);
     }
 
     /**
@@ -231,11 +222,7 @@ public class CommandManager {
      * @return the {@link MultistageCloseCommand} instance.
      */
     public Optional<MultistageCloseCommand> getCloseCommand() {
-        try {
-            return Optional.ofNullable(((MultistageCloseCommand) getCommand(this.closeCommand)));
-        } catch (CommandNotFound commandNotFound) {
-            return Optional.empty();
-        }
+        return Optional.ofNullable(this.closeCommand);
     }
 
     /**
@@ -244,11 +231,7 @@ public class CommandManager {
      * @return the {@link MultistageDoneCommand} instance.
      */
     public Optional<MultistageDoneCommand> getDoneCommand() {
-        try {
-            return Optional.ofNullable(((MultistageDoneCommand) getCommand(this.doneCommand)));
-        } catch (CommandNotFound commandNotFound) {
-            return Optional.empty();
-        }
+        return Optional.ofNullable(this.doneCommand);
     }
 
     /**
@@ -257,11 +240,7 @@ public class CommandManager {
      * @return the {@link HelpCommand} instance.
      */
     public Optional<HelpCommand> getHelpCommand() {
-        try {
-            return Optional.ofNullable(((HelpCommand) getCommand(this.helpCommand)));
-        } catch (CommandNotFound commandNotFound) {
-            return Optional.empty();
-        }
+        return Optional.ofNullable(this.helpCommand);
     }
 
     /**

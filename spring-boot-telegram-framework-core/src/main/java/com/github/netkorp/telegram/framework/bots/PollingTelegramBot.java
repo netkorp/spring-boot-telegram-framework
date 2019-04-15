@@ -7,6 +7,7 @@ import com.github.netkorp.telegram.framework.commands.multistage.MultistageClose
 import com.github.netkorp.telegram.framework.commands.multistage.MultistageDoneCommand;
 import com.github.netkorp.telegram.framework.exceptions.CommandNotActive;
 import com.github.netkorp.telegram.framework.exceptions.CommandNotFound;
+import com.github.netkorp.telegram.framework.exceptions.UserNotAuthorized;
 import com.github.netkorp.telegram.framework.managers.CommandManager;
 import com.github.netkorp.telegram.framework.managers.SecurityManager;
 import org.slf4j.Logger;
@@ -86,50 +87,78 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         // We check if the update has a message and the message has text
         if (update.hasMessage()) {
-            Long idChat = update.getMessage().getChatId();
+            Long chatId = update.getMessage().getChatId();
 
-            try {
-                // Checking if this is a command
-                if (update.getMessage().hasText()) {
-                    Map.Entry<String, String[]> command = getCommand(update);
-
-                    // Checking if it's a non-secure command
+            if (commandManager.hasActiveCommand(chatId)) {
+                if (!update.getMessage().isCommand()
+                        || !reservedCommands(getCleanedCommand(update), update)) {
                     try {
-                        Command commandInstance = commandManager.getNonSecureCommand(command.getKey());
-                        if (commandInstance instanceof SimpleCommand) {
-                            executeSimpleCommand((SimpleCommand) commandInstance, command.getValue(), update);
-                        }
-                        return;
-                    } catch (CommandNotFound commandNotFound) {
-                        // Do nothing
+                        commandManager.getActiveCommand(chatId).execute(update);
+                    } catch (CommandNotActive commandNotActive) {
+                        // Do nothing. This point is impossible to reach.
                     }
                 }
 
-                // Checking if the chat is authorized
-                if (securityManager.isAuthorized(idChat)) {
-                    processMessage(update);
+                return;
+            }
+
+            // Checking if this is a command
+            if (update.getMessage().isCommand()) {
+                try {
+                    Map.Entry<String, String[]> commandAndArgs = getCleanedCommandAndArgs(update);
+                    Command command = commandManager.getCommand(commandAndArgs.getKey());
+
+                    if (!securityManager.isAuthorized(chatId, command)) {
+                        throw new UserNotAuthorized();
+                    }
+
+                    if (command instanceof MultistageCommand && ((MultistageCommand) command).init(update)) {
+                        commandManager.setActiveCommand(chatId, ((MultistageCommand) command));
+                    } else if (command instanceof SimpleCommand) {
+                        if (commandAndArgs.getValue().length == 0) {
+                            ((SimpleCommand) command).execute(update);
+                        } else {
+                            ((SimpleCommand) command).execute(update, commandAndArgs.getValue());
+                        }
+                    }
+                } catch (CommandNotFound commandNotFound) {
+                    sendMessage(commandNotFound.getMessage(), chatId);
+                    commandManager.getHelpCommand()
+                            .filter(command -> securityManager.isAuthorized(chatId, command))
+                            .ifPresent(command -> command.execute(update));
+                } catch (UserNotAuthorized userNotAuthorized) {
+                    sendMessage(userNotAuthorized.getMessage(), chatId);
                 }
-            } catch (CommandNotFound commandNotFound) {
-                sendMessage(commandNotFound.getMessage(), idChat);
-                commandManager.getHelpCommand().ifPresent(command -> command.execute(update));
+            } else {
+                sendMessage("That is not a command", chatId);
             }
         }
     }
 
     /**
-     * Returns the command invoked by the user from the message sent by him, cleaning the text and deleting the bot's username.
+     * Returns the command invoked by the user and the parameters, cleaning the text and deleting the bot's username.
      *
      * @param update the received update.
      * @return the command and the parameters.
      */
-    private Map.Entry<String, String[]> getCommand(Update update) {
-        String cleanedCommand = update.getMessage().getText().toLowerCase()
-                .replace(String.format("@%s", getBotUsername().toLowerCase()), "");
+    private Map.Entry<String, String[]> getCleanedCommandAndArgs(Update update) {
+        String cleanedCommand = getCleanedCommand(update);
 
         String[] dividedText = cleanedCommand.split(" ");
 
         return new AbstractMap.SimpleEntry<>(dividedText[0],
                 Arrays.copyOfRange(dividedText, 1, dividedText.length));
+    }
+
+    /**
+     * Returns the command invoked by the user, cleaning the text and deleting the bot's username.
+     *
+     * @param update the received update.
+     * @return the command.
+     */
+    private String getCleanedCommand(Update update) {
+        return update.getMessage().getText().toLowerCase()
+                .replace(String.format("@%s", getBotUsername().toLowerCase()), "");
     }
 
     /**
@@ -150,70 +179,6 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
     @Override
     public String getBotToken() {
         return botToken;
-    }
-
-    /**
-     * Processes a given message.
-     *
-     * @param update the message sent by the user.
-     */
-    private void processMessage(Update update) throws CommandNotFound {
-        final Long idChat = update.getMessage().getChatId();
-
-        // Perhaps is a command
-        if (update.getMessage().hasText()) {
-            Map.Entry<String, String[]> commandText = getCommand(update);
-
-            if (reservedCommands(commandText.getKey(), update)) {
-                return;
-            }
-
-            // Trying to get a command
-            try {
-                Command command = commandManager.getCommand(commandText.getKey());
-
-                // If there is no active command defined, we understand this is an attempt to define/execute one
-                if (!commandManager.hasActiveCommand(idChat)) {
-
-                    if (command instanceof MultistageCommand) {
-                        if (((MultistageCommand) command).init(update)) {
-                            commandManager.setActiveCommand(idChat, ((MultistageCommand) command));
-                        }
-                    } else if (command instanceof SimpleCommand) {
-                        executeSimpleCommand((SimpleCommand) command, commandText.getValue(), update);
-                    }
-
-                    return;
-                }
-            } catch (CommandNotFound commandNotFound) {
-                // Perhaps we're talking about data here. If there is an active command, we leave it to it.
-                if (!commandManager.hasActiveCommand(idChat)) {
-                    throw commandNotFound;
-                }
-            }
-        }
-
-        // If there is an active command, we handle the messages as data
-        try {
-            commandManager.getActiveCommand(idChat).execute(update);
-        } catch (CommandNotActive commandNotActive) {
-            sendMessage(commandNotActive.getMessage(), idChat);
-        }
-    }
-
-    /**
-     * Executes a {@link SimpleCommand} attending if there are parameters or not.
-     *
-     * @param command the command to be executed.
-     * @param args    the parameters passed to the command execution.
-     * @param update  the message sent by the user.
-     */
-    private void executeSimpleCommand(SimpleCommand command, String[] args, Update update) {
-        if (args.length == 0) {
-            command.execute(update);
-        } else {
-            command.execute(update, args);
-        }
     }
 
     /**

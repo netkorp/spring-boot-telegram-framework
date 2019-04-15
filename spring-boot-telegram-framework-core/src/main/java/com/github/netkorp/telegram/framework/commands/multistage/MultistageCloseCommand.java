@@ -4,6 +4,8 @@ import com.github.netkorp.telegram.framework.annotations.TelegramCommand;
 import com.github.netkorp.telegram.framework.commands.abstracts.AbstractSimpleCommand;
 import com.github.netkorp.telegram.framework.commands.interfaces.MultistageCommand;
 import com.github.netkorp.telegram.framework.exceptions.CommandNotActive;
+import com.github.netkorp.telegram.framework.managers.SecurityManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -12,9 +14,24 @@ import org.telegram.telegrambots.meta.api.objects.Update;
  *
  * @see MultistageDoneCommand
  */
-@TelegramCommand(name = "close", group = "Multistage")
+@TelegramCommand(name = "close", group = "Multistage", secure = false)
 @ConditionalOnBean(MultistageCommand.class)
 public class MultistageCloseCommand extends AbstractSimpleCommand {
+
+    /**
+     * The component to know which user is authorized.
+     */
+    private final SecurityManager securityManager;
+
+    /**
+     * Constructs a new {@link MultistageCloseCommand} instance with the {@link SecurityManager} component instance.
+     *
+     * @param securityManager the {@link SecurityManager} component instance.
+     */
+    @Autowired
+    public MultistageCloseCommand(SecurityManager securityManager) {
+        this.securityManager = securityManager;
+    }
 
     /**
      * Processes the data sent by the users.
@@ -24,15 +41,17 @@ public class MultistageCloseCommand extends AbstractSimpleCommand {
      */
     @Override
     public void execute(Update update, String[] args) {
-        final Long idChat = update.getMessage().getChatId();
+        final Long chatId = update.getMessage().getChatId();
 
         try {
-            if (commandManager.getActiveCommand(idChat).close(update)) {
-                commandManager.removeActiveCommand(idChat);
+            if (commandManager.getActiveCommand(chatId).close(update)) {
+                commandManager.removeActiveCommand(chatId);
             }
         } catch (CommandNotActive commandNotActive) {
-            bot.sendMessage(commandNotActive.getMessage(), idChat);
-            commandManager.getHelpCommand().ifPresent(command -> command.execute(update));
+            bot.sendMessage(commandNotActive.getMessage(), chatId);
+            commandManager.getHelpCommand()
+                    .filter(command -> securityManager.isAuthorized(chatId, command))
+                    .ifPresent(command -> command.execute(update));
         }
     }
 
