@@ -97,7 +97,7 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
                     try {
                         Command commandInstance = commandManager.getNonSecureCommand(command.getKey());
                         if (commandInstance instanceof SimpleCommand) {
-                            ((SimpleCommand) commandInstance).execute(update, command.getValue());
+                            executeSimpleCommand((SimpleCommand) commandInstance, command.getValue(), update);
                         }
                         return;
                     } catch (CommandNotFound commandNotFound) {
@@ -180,7 +180,7 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
                             commandManager.setActiveCommand(idChat, ((MultistageCommand) command));
                         }
                     } else if (command instanceof SimpleCommand) {
-                        ((SimpleCommand) command).execute(update, commandText.getValue());
+                        executeSimpleCommand((SimpleCommand) command, commandText.getValue(), update);
                     }
 
                     return;
@@ -198,6 +198,21 @@ public class PollingTelegramBot extends TelegramLongPollingBot {
             commandManager.getActiveCommand(idChat).execute(update);
         } catch (CommandNotActive commandNotActive) {
             sendMessage(commandNotActive.getMessage(), idChat);
+        }
+    }
+
+    /**
+     * Executes a {@link SimpleCommand} attending if there are parameters or not.
+     *
+     * @param command the command to be executed.
+     * @param args    the parameters passed to the command execution.
+     * @param update  the message sent by the user.
+     */
+    private void executeSimpleCommand(SimpleCommand command, String[] args, Update update) {
+        if (args.length == 0) {
+            command.execute(update);
+        } else {
+            command.execute(update, args);
         }
     }
 
