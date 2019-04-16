@@ -9,9 +9,12 @@ import com.github.netkorp.telegram.framework.commands.multistage.MultistageDoneC
 import com.github.netkorp.telegram.framework.properties.CommandProperties;
 import com.github.netkorp.telegram.framework.exceptions.CommandNotActive;
 import com.github.netkorp.telegram.framework.exceptions.CommandNotFound;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,6 +29,8 @@ import java.util.Optional;
 @SuppressWarnings("WeakerAccess")
 @Component
 public class CommandManager {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /**
      * The list of the available commands into a map to get a quick access from its name.
@@ -106,6 +111,13 @@ public class CommandManager {
     private void addCommand(Command command) {
         // Registering the command for each name
         for (String name : getCommandNames(command)) {
+
+            if (!isValidCommandName(name)) {
+                LOG.warn(String.format("Command %s has a duplicate or empty name. It will be discarded.",
+                        command.getClass().getSimpleName()));
+                break;
+            }
+
             this.commandsByFullName.put(getCommandFullName(name), command);
 
             if (!this.commands.contains(command)) {
@@ -120,13 +132,23 @@ public class CommandManager {
             }
 
             if (command instanceof MultistageCloseCommand) {
-                closeCommand = ((MultistageCloseCommand) command);
+                closeCommand = (MultistageCloseCommand) command;
             } else if (command instanceof MultistageDoneCommand) {
-                doneCommand = ((MultistageDoneCommand) command);
+                doneCommand = (MultistageDoneCommand) command;
             } else if (command instanceof HelpCommand) {
-                helpCommand = ((HelpCommand) command);
+                helpCommand = (HelpCommand) command;
             }
         }
+    }
+
+    /**
+     * Returns {@code true} if the command name is a valid name for a command.
+     *
+     * @param commandName the name of the command to validate.
+     * @return {@code true} if the command name is a valid name for a command; {@code false} otherwise.
+     */
+    private boolean isValidCommandName(String commandName) {
+        return !commandName.trim().isEmpty() && !this.commandsByFullName.containsKey(commandName);
     }
 
     /**
