@@ -132,7 +132,6 @@ public class CommandManager {
      * @param command the command from which the name will be identified.
      * @return the name of the command.
      */
-    @SuppressWarnings("WeakerAccess")
     public static String getCommandName(Command command) {
         return command.getClass().getAnnotation(TelegramCommand.class).name();
     }
