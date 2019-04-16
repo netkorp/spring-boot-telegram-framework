@@ -12,8 +12,8 @@ import com.github.netkorp.telegram.framework.exceptions.CommandNotFound;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -30,12 +30,17 @@ public class CommandManager {
     /**
      * The list of the available commands into a map to get a quick access from its name.
      */
-    private final Map<String, Command> commands;
+    private final Map<String, Command> commandsByFullName;
 
     /**
-     * The list of the non-secure commands into a map to get a quick access from its name.
+     * The list of the available commands.
      */
-    private final Map<String, Command> nonSecureCommands;
+    private final List<Command> commands;
+
+    /**
+     * The list of the non-secure commands.
+     */
+    private final List<Command> nonSecureCommands;
 
     /**
      * The command that is active for each user.
@@ -74,8 +79,9 @@ public class CommandManager {
      */
     @Autowired
     public CommandManager(List<Command> commands, CommandProperties commandProperties) {
-        this.commands = new HashMap<>();
-        this.nonSecureCommands = new HashMap<>();
+        this.commandsByFullName = new HashMap<>();
+        this.commands = new LinkedList<>();
+        this.nonSecureCommands = new LinkedList<>();
 
         this.activeCommand = new HashMap<>();
         this.commandProperties = commandProperties;
@@ -90,6 +96,7 @@ public class CommandManager {
      * {@link #closeCommand}, {@link #doneCommand} and {@link #helpCommand}.
      *
      * @param command the command to be added.
+     * @see #commandsByFullName
      * @see #commands
      * @see #nonSecureCommands
      * @see #closeCommand
@@ -97,21 +104,28 @@ public class CommandManager {
      * @see #helpCommand
      */
     private void addCommand(Command command) {
-        this.commands.put(getCommandFullName(command), command);
+        // Registering the command for each name
+        for (String name : getCommandNames(command)) {
+            this.commandsByFullName.put(getCommandFullName(name), command);
 
-        // Just for keeping a reference of the non-secure commands
-        if (commandProperties.getNonSecure().contains(getCommandName(command))
-                || commandProperties.getNonSecure().contains(getCommandFullName(command))
-                || !command.getClass().getAnnotation(TelegramCommand.class).secure()) {
-            this.nonSecureCommands.put(getCommandFullName(command), command);
-        }
+            if (!this.commands.contains(command)) {
+                this.commands.add(command);
+            }
 
-        if (command instanceof MultistageCloseCommand) {
-            closeCommand = ((MultistageCloseCommand) command);
-        } else if (command instanceof MultistageDoneCommand) {
-            doneCommand = ((MultistageDoneCommand) command);
-        } else if (command instanceof HelpCommand) {
-            helpCommand = ((HelpCommand) command);
+            // Just for keeping a reference of the non-secure commands
+            if ((commandProperties.getNonSecure().contains(name)
+                    || !command.getClass().getAnnotation(TelegramCommand.class).secure())
+                    && !this.nonSecureCommands.contains(command)) {
+                this.nonSecureCommands.add(command);
+            }
+
+            if (command instanceof MultistageCloseCommand) {
+                closeCommand = ((MultistageCloseCommand) command);
+            } else if (command instanceof MultistageDoneCommand) {
+                doneCommand = ((MultistageDoneCommand) command);
+            } else if (command instanceof HelpCommand) {
+                helpCommand = ((HelpCommand) command);
+            }
         }
     }
 
@@ -122,17 +136,17 @@ public class CommandManager {
      * @return {@code true} if the command is non-secure; {@code false} otherwise.
      */
     public boolean isNonSecureCommand(Command command) {
-        return this.nonSecureCommands.containsKey(getCommandFullName(command));
+        return this.nonSecureCommands.contains(command);
     }
 
     /**
-     * Returns the name of the command (the same name declared on {@link TelegramCommand#name()}).
-     * The name may include the slash (/).
+     * Returns the names of the command (the same names declared on {@link TelegramCommand#name()}).
+     * The names may include the slash (/).
      *
-     * @param command the command from which the name will be identified.
-     * @return the name of the command.
+     * @param command the command from which the names will be identified.
+     * @return the names of the command.
      */
-    public static String getCommandName(Command command) {
+    public static String[] getCommandNames(Command command) {
         return command.getClass().getAnnotation(TelegramCommand.class).name();
     }
 
@@ -147,13 +161,19 @@ public class CommandManager {
     }
 
     /**
-     * Returns the name of the command. It includes the slash (/).
+     * Returns the names of the command. They include the slash (/).
      *
-     * @param command the command from which the name will be identified.
-     * @return the name of the command.
+     * @param command the command from which the names will be identified.
+     * @return the names of the command.
      */
-    public static String getCommandFullName(Command command) {
-        return getCommandFullName(getCommandName(command));
+    public static List<String> getCommandFullNames(Command command) {
+        List<String> commandFullNames = new LinkedList<>();
+
+        for (String name : getCommandNames(command)) {
+            commandFullNames.add(getCommandFullName(name));
+        }
+
+        return commandFullNames;
     }
 
     /**
@@ -164,11 +184,11 @@ public class CommandManager {
      * @throws CommandNotFound if the name is not related to any commands.
      */
     public Command getCommand(String command) throws CommandNotFound {
-        if (!this.commands.containsKey(command)) {
+        if (!this.commandsByFullName.containsKey(command)) {
             throw new CommandNotFound();
         }
 
-        return this.commands.get(command);
+        return this.commandsByFullName.get(command);
     }
 
     /**
@@ -247,8 +267,8 @@ public class CommandManager {
      *
      * @return the available commands.
      */
-    public Collection<Command> getAvailableCommands() {
-        return commands.values();
+    public List<Command> getAvailableCommands() {
+        return commands;
     }
 
     /**
@@ -256,7 +276,7 @@ public class CommandManager {
      *
      * @return the available non-secure commands.
      */
-    public Collection<Command> getAvailableNonSecureCommands() {
-        return nonSecureCommands.values();
+    public List<Command> getAvailableNonSecureCommands() {
+        return nonSecureCommands;
     }
 }

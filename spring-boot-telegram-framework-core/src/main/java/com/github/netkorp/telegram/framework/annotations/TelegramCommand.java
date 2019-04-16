@@ -29,7 +29,7 @@ public @interface TelegramCommand {
      *
      * @return the name of the command.
      */
-    String name();
+    String[] name();
 
     /**
      * Indicates the group of commands where the command will be included, if any; empty String otherwise.

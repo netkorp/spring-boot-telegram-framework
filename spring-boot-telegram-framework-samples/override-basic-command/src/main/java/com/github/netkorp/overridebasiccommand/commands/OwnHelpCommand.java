@@ -22,7 +22,7 @@ public class OwnHelpCommand extends AbstractSimpleCommand implements HelpCommand
         StringJoiner stringJoiner = new StringJoiner(System.lineSeparator());
         stringJoiner.add("Commands:");
         commandManager.getAvailableNonSecureCommands()
-                .forEach(command -> stringJoiner.add(String.format("%s - <b>%s</b>", CommandManager.getCommandFullName(command), command.description())));
+                .forEach(command -> stringJoiner.add(String.format("%s - <b>%s</b>", CommandManager.getCommandFullNames(command), command.description())));
         bot.sendMessage(stringJoiner.toString(), update.getMessage().getChatId(), true);
     }
 

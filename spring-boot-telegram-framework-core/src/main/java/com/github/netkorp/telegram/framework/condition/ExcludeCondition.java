@@ -33,8 +33,12 @@ public class ExcludeCondition implements Condition {
         if (excludeValue != null && context.getBeanFactory() != null) {
             Map<String, Object> attributes = metadata.getAnnotationAttributes(TelegramCommand.class.getName());
             if (attributes != null) {
-                String commandName = (String) attributes.get("name");
-                return !excludeValue.contains(commandName);
+                String[] commandNames = (String[]) attributes.get("name");
+                for (String commandName : commandNames) {
+                    if (excludeValue.contains(commandName)) {
+                        return false;
+                    }
+                }
             }
         }
 

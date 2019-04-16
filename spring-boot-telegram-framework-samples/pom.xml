@@ -24,6 +24,7 @@
     <module>simple-command</module>
     <module>multistage-command</module>
     <module>override-basic-command</module>
+    <module>several-names-command</module>
   </modules>
 
   <build>

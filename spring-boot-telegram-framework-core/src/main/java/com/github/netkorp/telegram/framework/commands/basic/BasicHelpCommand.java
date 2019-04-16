@@ -113,7 +113,9 @@ public class BasicHelpCommand extends AbstractSimpleCommand implements HelpComma
      * @return the help of the command.
      */
     private String helpForCommand(Command command) {
-        return String.format("%s - %s", CommandManager.getCommandFullName(command), command.description());
+        StringJoiner stringJoiner = new StringJoiner(", ");
+        CommandManager.getCommandFullNames(command).forEach(stringJoiner::add);
+        return String.format("%s - %s", stringJoiner.toString(), command.description());
     }
 
     /**
