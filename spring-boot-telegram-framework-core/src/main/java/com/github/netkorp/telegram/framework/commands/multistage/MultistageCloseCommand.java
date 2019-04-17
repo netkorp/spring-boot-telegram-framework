@@ -14,7 +14,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
  *
  * @see MultistageDoneCommand
  */
-@TelegramCommand(name = "close", group = "commands.groups.close", secure = false)
+@TelegramCommand(name = "close", group = "commands.groups.close", description = "commands.description.close", secure = false)
 @ConditionalOnBean(MultistageCommand.class)
 public class MultistageCloseCommand extends AbstractSimpleCommand {
 
@@ -53,15 +53,5 @@ public class MultistageCloseCommand extends AbstractSimpleCommand {
                     .filter(command -> securityManager.isAuthorized(chatId, command))
                     .ifPresent(command -> command.execute(update));
         }
-    }
-
-    /**
-     * Returns the command's description key, used to retrieve the help message.
-     *
-     * @return the command's description key.
-     */
-    @Override
-    public String descriptionKey() {
-        return "commands.description.close";
     }
 }

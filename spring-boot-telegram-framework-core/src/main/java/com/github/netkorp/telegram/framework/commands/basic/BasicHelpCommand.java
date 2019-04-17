@@ -26,7 +26,7 @@ import java.util.TreeMap;
 /**
  * Displays the bot's help.
  */
-@TelegramCommand(name = "help", group = "commands.groups.help")
+@TelegramCommand(name = "help", group = "commands.groups.help", description = "commands.description.help")
 @Conditional(ExcludeCondition.class)
 @ConditionalOnSingleCandidate(HelpCommand.class)
 public class BasicHelpCommand extends AbstractSimpleCommand implements HelpCommand {
@@ -121,17 +121,7 @@ public class BasicHelpCommand extends AbstractSimpleCommand implements HelpComma
     private String helpForCommand(Command command) {
         StringJoiner stringJoiner = new StringJoiner(", ");
         CommandManager.getCommandFullNames(command).forEach(stringJoiner::add);
-
-        String description;
-
-        try {
-            description = messageSource.getMessage(command.descriptionKey(), null, LocaleContextHolder.getLocale());
-        } catch (NoSuchMessageException exception) {
-            description = messageSource.getMessage("commands.basic.help.default-description", null,
-                    LocaleContextHolder.getLocale());
-        }
-
-        return String.format("%s - %s", stringJoiner.toString(), description);
+        return String.format("%s - %s", stringJoiner.toString(), getDescription(command));
     }
 
     /**
@@ -161,6 +151,34 @@ public class BasicHelpCommand extends AbstractSimpleCommand implements HelpComma
     }
 
     /**
+     * Returns the description of the command.
+     *
+     * @param command the command from which the description will be retrieved.
+     * @return the command's description.
+     */
+    private String getDescription(Command command) {
+        String description = command.getClass().getAnnotation(TelegramCommand.class).description();
+
+        // If there is no explicit description, we'll try to generate a description key to retrieve a message
+        if (description.isEmpty()) {
+            String className = command.getClass().getSimpleName().toLowerCase();
+            if (!"command".equals(className) && className.endsWith("command")) {
+                className = className.substring(0, className.length() - 7);
+            }
+
+            description = "commands.description." + className;
+        }
+
+        try {
+            description = messageSource.getMessage(description, null, LocaleContextHolder.getLocale());
+        } catch (NoSuchMessageException exception) {
+            // Do nothing
+        }
+
+        return description;
+    }
+
+    /**
      * Returns the list of available commands for the user. It takes into account whether the user is authorized or not.
      *
      * @param chatId the identification of the user's chat.
@@ -172,15 +190,5 @@ public class BasicHelpCommand extends AbstractSimpleCommand implements HelpComma
         }
 
         return commandManager.getAvailableNonSecureCommands();
-    }
-
-    /**
-     * Returns the command's description key, used to retrieve the help message.
-     *
-     * @return the command's description key.
-     */
-    @Override
-    public String descriptionKey() {
-        return "commands.description.help";
     }
 }

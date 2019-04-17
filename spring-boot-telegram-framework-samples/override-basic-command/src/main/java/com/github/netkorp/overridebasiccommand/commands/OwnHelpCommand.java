@@ -25,7 +25,8 @@ public class OwnHelpCommand extends AbstractSimpleCommand implements HelpCommand
                 LocaleContextHolder.getLocale())));
         commandManager.getAvailableNonSecureCommands()
                 .forEach(command -> stringJoiner.add(String.format("%s - <b>%s</b>", CommandManager.getCommandFullNames(command),
-                        messageSource.getMessage(command.descriptionKey(), null, LocaleContextHolder.getLocale()))));
+                        messageSource.getMessage(command.getClass().getAnnotation(TelegramCommand.class).description(),
+                                null, LocaleContextHolder.getLocale()))));
         bot.sendMessage(stringJoiner.toString(), update.getMessage().getChatId(), true);
     }
 }

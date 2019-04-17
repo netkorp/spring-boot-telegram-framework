@@ -25,9 +25,9 @@ import java.lang.annotation.Target;
 public @interface TelegramCommand {
 
     /**
-     * Returns the name of the command that will be used to invoke it.
+     * Returns the names of the command that will be used to invoke it.
      *
-     * @return the name of the command.
+     * @return the names of the command.
      */
     String[] name();
 
@@ -37,6 +37,13 @@ public @interface TelegramCommand {
      * @return the name of the group.
      */
     String group() default "";
+
+    /**
+     * Returns the description of the command.
+     *
+     * @return the description of the command.
+     */
+    String description() default "";
 
     /**
      * Returns {@code true} if the command is secure.
