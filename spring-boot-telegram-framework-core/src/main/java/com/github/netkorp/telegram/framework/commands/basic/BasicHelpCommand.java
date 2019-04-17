@@ -19,6 +19,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.SortedMap;
 import java.util.StringJoiner;
 import java.util.TreeMap;
@@ -134,12 +135,7 @@ public class BasicHelpCommand extends AbstractSimpleCommand implements HelpComma
         SortedMap<String, List<Command>> commandsByGroup = new TreeMap<>();
 
         commands.forEach(command -> {
-            String group = command.getClass().getAnnotation(TelegramCommand.class).group();
-            try {
-                group = messageSource.getMessage(group, null, LocaleContextHolder.getLocale());
-            } catch (NoSuchMessageException exception) {
-                // Do nothing
-            }
+            String group = getGroupName(command);
 
             List<Command> commandList = commandsByGroup.getOrDefault(group, new LinkedList<>());
             commandList.add(command);
@@ -151,28 +147,69 @@ public class BasicHelpCommand extends AbstractSimpleCommand implements HelpComma
     }
 
     /**
+     * Cleans the class name by removing the word "command" from it.
+     *
+     * @param commandClass the class to be cleaned.
+     * @return the cleaned class name.
+     */
+    private String cleanCommandClassName(Class<?> commandClass) {
+        String className = commandClass.getSimpleName().toLowerCase();
+        if (!"command".equals(className) && className.endsWith("command")) {
+            className = className.substring(0, className.length() - 7);
+        }
+
+        return className;
+    }
+
+    /**
+     * Returns the group's name of the command.
+     *
+     * @param command the command from which the group's name will be retrieved.
+     * @return the group's name.
+     */
+    private String getGroupName(Command command) {
+        String groupName = command.getClass().getAnnotation(TelegramCommand.class).group().trim();
+
+        // If there is no an explicit group, we'll try to generate a key to retrieve a message
+        String key = "";
+        if (groupName.isEmpty()) {
+            key = "commands.groups." + cleanCommandClassName(command.getClass());
+            groupName = key;
+        }
+
+        try {
+            groupName = messageSource.getMessage(groupName, null, LocaleContextHolder.getLocale());
+        } catch (NoSuchMessageException exception) {
+            if (Objects.equals(key, groupName)) {
+                groupName = "";
+            }
+        }
+
+        return groupName;
+    }
+
+    /**
      * Returns the description of the command.
      *
      * @param command the command from which the description will be retrieved.
      * @return the command's description.
      */
     private String getDescription(Command command) {
-        String description = command.getClass().getAnnotation(TelegramCommand.class).description();
+        String description = command.getClass().getAnnotation(TelegramCommand.class).description().trim();
 
         // If there is no explicit description, we'll try to generate a description key to retrieve a message
+        String key = "";
         if (description.isEmpty()) {
-            String className = command.getClass().getSimpleName().toLowerCase();
-            if (!"command".equals(className) && className.endsWith("command")) {
-                className = className.substring(0, className.length() - 7);
-            }
-
-            description = "commands.description." + className;
+            key = "commands.description." + cleanCommandClassName(command.getClass());
+            description = key;
         }
 
         try {
             description = messageSource.getMessage(description, null, LocaleContextHolder.getLocale());
         } catch (NoSuchMessageException exception) {
-            // Do nothing
+            if (Objects.equals(key, description)) {
+                description = messageSource.getMessage("commands.basic.help.default-description", null, LocaleContextHolder.getLocale());
+            }
         }
 
         return description;
