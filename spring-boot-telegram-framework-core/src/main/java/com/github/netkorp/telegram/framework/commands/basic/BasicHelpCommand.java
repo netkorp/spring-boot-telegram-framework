@@ -26,7 +26,7 @@ import java.util.TreeMap;
 /**
  * Displays the bot's help.
  */
-@TelegramCommand(name = "help", group = "Basic")
+@TelegramCommand(name = "help", group = "commands.groups.help")
 @Conditional(ExcludeCondition.class)
 @ConditionalOnSingleCandidate(HelpCommand.class)
 public class BasicHelpCommand extends AbstractSimpleCommand implements HelpCommand {
@@ -144,8 +144,12 @@ public class BasicHelpCommand extends AbstractSimpleCommand implements HelpComma
         SortedMap<String, List<Command>> commandsByGroup = new TreeMap<>();
 
         commands.forEach(command -> {
-            // Groups
             String group = command.getClass().getAnnotation(TelegramCommand.class).group();
+            try {
+                group = messageSource.getMessage(group, null, LocaleContextHolder.getLocale());
+            } catch (NoSuchMessageException exception) {
+                // Do nothing
+            }
 
             List<Command> commandList = commandsByGroup.getOrDefault(group, new LinkedList<>());
             commandList.add(command);

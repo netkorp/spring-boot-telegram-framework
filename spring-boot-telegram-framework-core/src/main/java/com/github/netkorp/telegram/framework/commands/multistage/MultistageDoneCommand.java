@@ -14,7 +14,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
  *
  * @see MultistageCloseCommand
  */
-@TelegramCommand(name = "done", group = "Multistage", secure = false)
+@TelegramCommand(name = "done", group = "commands.groups.done", secure = false)
 @ConditionalOnBean(MultistageCommand.class)
 public class MultistageDoneCommand extends AbstractSimpleCommand {
 
