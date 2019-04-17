@@ -56,12 +56,12 @@ public class MultistageCloseCommand extends AbstractSimpleCommand {
     }
 
     /**
-     * Returns the command's description, used to be displayed in help message.
+     * Returns the command's description key, used to retrieve the help message.
      *
-     * @return the command's description.
+     * @return the command's description key.
      */
     @Override
-    public String description() {
-        return "Closes the current task. There should be an active command before.";
+    public String descriptionKey() {
+        return "commands.description.close";
     }
 }

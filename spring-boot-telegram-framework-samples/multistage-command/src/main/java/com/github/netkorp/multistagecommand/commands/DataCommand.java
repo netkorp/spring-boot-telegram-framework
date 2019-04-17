@@ -74,14 +74,4 @@ public class DataCommand extends AbstractMultistageCommand {
                 break;
         }
     }
-
-    /**
-     * Returns the command's description, used to be displayed in help message.
-     *
-     * @return the command's description.
-     */
-    @Override
-    public String description() {
-        return "It shows you your first name and last name";
-    }
 }

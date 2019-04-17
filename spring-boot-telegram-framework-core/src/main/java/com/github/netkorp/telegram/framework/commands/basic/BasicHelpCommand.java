@@ -11,6 +11,7 @@ import com.github.netkorp.telegram.framework.managers.SecurityManager;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -120,8 +121,17 @@ public class BasicHelpCommand extends AbstractSimpleCommand implements HelpComma
     private String helpForCommand(Command command) {
         StringJoiner stringJoiner = new StringJoiner(", ");
         CommandManager.getCommandFullNames(command).forEach(stringJoiner::add);
-        return String.format("%s - %s", stringJoiner.toString(), messageSource.getMessage(command.description(), null,
-                LocaleContextHolder.getLocale()));
+
+        String description;
+
+        try {
+            description = messageSource.getMessage(command.descriptionKey(), null, LocaleContextHolder.getLocale());
+        } catch (NoSuchMessageException exception) {
+            description = messageSource.getMessage("commands.basic.help.default-description", null,
+                    LocaleContextHolder.getLocale());
+        }
+
+        return String.format("%s - %s", stringJoiner.toString(), description);
     }
 
     /**
@@ -161,12 +171,12 @@ public class BasicHelpCommand extends AbstractSimpleCommand implements HelpComma
     }
 
     /**
-     * Returns the command's description, used to be displayed in help message.
+     * Returns the command's description key, used to retrieve the help message.
      *
-     * @return the command's description.
+     * @return the command's description key.
      */
     @Override
-    public String description() {
+    public String descriptionKey() {
         return "commands.description.help";
     }
 }

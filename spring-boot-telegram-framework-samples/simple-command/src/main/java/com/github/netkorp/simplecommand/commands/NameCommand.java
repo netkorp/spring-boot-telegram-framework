@@ -17,14 +17,4 @@ public class NameCommand extends AbstractSimpleCommand {
     public void execute(Update update, String[] args) {
         bot.sendMessage(update.getMessage().getChat().getFirstName(), update.getMessage().getChatId());
     }
-
-    /**
-     * Returns the command's description, used to be displayed in help message.
-     *
-     * @return the command's description.
-     */
-    @Override
-    public String description() {
-        return "It tells you what your first name is";
-    }
 }

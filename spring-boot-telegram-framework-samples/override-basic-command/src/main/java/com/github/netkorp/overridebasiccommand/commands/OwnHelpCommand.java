@@ -4,6 +4,7 @@ import com.github.netkorp.telegram.framework.annotations.TelegramCommand;
 import com.github.netkorp.telegram.framework.commands.abstracts.AbstractSimpleCommand;
 import com.github.netkorp.telegram.framework.commands.interfaces.HelpCommand;
 import com.github.netkorp.telegram.framework.managers.CommandManager;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.StringJoiner;
@@ -20,19 +21,11 @@ public class OwnHelpCommand extends AbstractSimpleCommand implements HelpCommand
     @Override
     public void execute(Update update, String[] args) {
         StringJoiner stringJoiner = new StringJoiner(System.lineSeparator());
-        stringJoiner.add("Commands:");
+        stringJoiner.add(String.format("%s:", messageSource.getMessage("commands.ownhelp.title", null,
+                LocaleContextHolder.getLocale())));
         commandManager.getAvailableNonSecureCommands()
-                .forEach(command -> stringJoiner.add(String.format("%s - <b>%s</b>", CommandManager.getCommandFullNames(command), command.description())));
+                .forEach(command -> stringJoiner.add(String.format("%s - <b>%s</b>", CommandManager.getCommandFullNames(command),
+                        messageSource.getMessage(command.descriptionKey(), null, LocaleContextHolder.getLocale()))));
         bot.sendMessage(stringJoiner.toString(), update.getMessage().getChatId(), true);
-    }
-
-    /**
-     * Returns the command's description, used to be displayed in help message.
-     *
-     * @return the command's description.
-     */
-    @Override
-    public String description() {
-        return "Displays an assistance message";
     }
 }

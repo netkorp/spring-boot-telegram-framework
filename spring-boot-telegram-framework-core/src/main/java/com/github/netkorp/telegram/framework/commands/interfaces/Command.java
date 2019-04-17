@@ -6,9 +6,16 @@ package com.github.netkorp.telegram.framework.commands.interfaces;
 public interface Command {
 
     /**
-     * Returns the command's description, used to be displayed in help message.
+     * Returns the command's description key, used to retrieve the help message.
      *
-     * @return the command's description.
+     * @return the command's description key.
      */
-    String description();
+    default String descriptionKey() {
+        String className = this.getClass().getSimpleName().toLowerCase();
+        if (!"command".equals(className) && className.endsWith("command")) {
+            className = className.substring(0, className.length() - 7);
+        }
+
+        return "commands.description." + className;
+    }
 }

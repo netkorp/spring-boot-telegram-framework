@@ -19,7 +19,7 @@ public class LocaleConfiguration {
     @Bean("TelegramFrameworkMessageSource")
     public MessageSource messageSource() {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-        messageSource.setBasename("classpath:messages/messages");
+        messageSource.setBasenames("classpath:default/messages", "classpath:messages/messages");
         messageSource.setDefaultEncoding("UTF-8");
         return messageSource;
     }

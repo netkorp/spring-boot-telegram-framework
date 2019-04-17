@@ -24,14 +24,4 @@ public final class WhoAmICommand extends AbstractSimpleCommand {
         Long idChat = update.getMessage().getChatId();
         bot.sendMessage(idChat.toString(), idChat);
     }
-
-    /**
-     * Returns the command's description, used to be displayed in help message.
-     *
-     * @return the command's description.
-     */
-    @Override
-    public String description() {
-        return "commands.description.whoami";
-    }
 }
