@@ -32,6 +32,6 @@ public final class WhoAmICommand extends AbstractSimpleCommand {
      */
     @Override
     public String description() {
-        return "Shows the ID of the current chat.";
+        return "commands.description.whoami";
     }
 }

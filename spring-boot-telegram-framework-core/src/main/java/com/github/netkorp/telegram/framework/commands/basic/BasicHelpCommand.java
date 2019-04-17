@@ -12,6 +12,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.context.annotation.Conditional;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.Collection;
@@ -84,9 +85,13 @@ public class BasicHelpCommand extends AbstractSimpleCommand implements HelpComma
     @Override
     public void execute(Update update) {
         StringJoiner stringJoiner = new StringJoiner(System.lineSeparator());
-        stringJoiner.add("You can control me by sending these commands:");
+
+        stringJoiner.add(String.format("%s:", messageSource.getMessage("commands.basic.help.title", null,
+                LocaleContextHolder.getLocale())));
+
         commandsByGroup(getAvailableCommands(update.getMessage().getChatId()))
                 .forEach((group, commands) -> stringJoiner.add(helpForGroup(group, commands)));
+
         bot.sendMessage(stringJoiner.toString(), update.getMessage().getChatId(), true);
     }
 
@@ -115,7 +120,8 @@ public class BasicHelpCommand extends AbstractSimpleCommand implements HelpComma
     private String helpForCommand(Command command) {
         StringJoiner stringJoiner = new StringJoiner(", ");
         CommandManager.getCommandFullNames(command).forEach(stringJoiner::add);
-        return String.format("%s - %s", stringJoiner.toString(), command.description());
+        return String.format("%s - %s", stringJoiner.toString(), messageSource.getMessage(command.description(), null,
+                LocaleContextHolder.getLocale()));
     }
 
     /**
@@ -161,6 +167,6 @@ public class BasicHelpCommand extends AbstractSimpleCommand implements HelpComma
      */
     @Override
     public String description() {
-        return "Shows this message";
+        return "commands.description.help";
     }
 }
