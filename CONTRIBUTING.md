@@ -29,7 +29,7 @@ For a better experience contributing to our project, we recommend check this tip
 
 1. Before creating a new issue, make sure there is not a similar issue already created for avoiding duplicates.
 2. Create issues for any change you want to make. Discuss things (see our [Code of Conduct](CODE_OF_CONDUCT.md)) and get community feedback.
-3. We use **semantic version** for the Framework's versioning. If you consider that the version must be changed, please stick to this [guide](https://semver.org/). To change the version we recommend to use this command in the root of the project: mvn versions:set -DnewVersion="version here".
+3. We use **semantic version** for the Framework's versioning. If you consider that the version must be changed, please stick to this [guide](https://semver.org/). To change the version we recommend to use this command in the root of the project: `mvn versions:set -DnewVersion="version here"`.
 
 Contributions are welcome via [Github pull requests](https://github.com/netkorp/spring-boot-telegram-framework/pulls). For all contributions, please respect the following guidelines:
 
